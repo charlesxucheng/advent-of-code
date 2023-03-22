@@ -7,5 +7,6 @@ import scala.io.Source
 @main def main(): Unit = {
 
   val filename = "day1-input.txt"
-  println(s"Answer is: ${CalorieCalculator.findMax(loadData(filename))}")
+  println(s"The highest value is: ${CalorieCalculator.findMax(loadData(filename))}")
+  println(s"The sum of the highest 3 values is: ${CalorieCalculator.findSumOfTopN(loadData(filename))}")
 }
