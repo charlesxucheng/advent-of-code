@@ -1,5 +1,7 @@
 package aoc2022
-package common
+package day1
+
+import day1.CalorieCalculator
 
 import org.scalatest.matchers.should.Matchers.should
 

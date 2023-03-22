@@ -1,8 +1,6 @@
 package aoc2022
 package day1
 
-import common.{CalorieCalculator, loadData}
-
 import scala.io.Source
 @main def main(): Unit = {
 

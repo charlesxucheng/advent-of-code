@@ -1,5 +1,5 @@
 package aoc2022
-package common
+package day1
 
 import scala.io.Source
 
