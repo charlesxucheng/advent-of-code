@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bd3264c1-a5e0-4b84-815d-bf42661acd89" name="Changes" comment="Refactoring of Day 1's code">
+    <list default="true" id="bd3264c1-a5e0-4b84-815d-bf42661acd89" name="Changes" comment="Day 1 part 2">
       <change afterPath="$PROJECT_DIR$/src/main/scala/day2/Main.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/common/CalorieCalculator.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/common/CalorieCalculator.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/scala/common/CalorieCalculatorTest.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/scala/common/CalorieCalculatorTest.scala" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,7 +72,7 @@
       <recent name="aoc2022.common" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.aoc2022.day2.main">
+  <component name="RunManager" selected="ScalaTest.CalorieCalculatorTest">
     <configuration name="aoc2022.day2.main" type="Application" factoryName="Application" temporary="true">
       <option name="MAIN_CLASS_NAME" value="aoc2022.day2.main" />
       <module name="advent-of-code-2022" />
@@ -101,7 +99,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="CalorieCalculatorTest (1)" type="ScalaTestRunConfiguration" factoryName="ScalaTest" temporary="true" nameIsGenerated="true" show_console_on_std_err="false" show_console_on_std_out="false">
+    <configuration name="CalorieCalculatorTest" type="ScalaTestRunConfiguration" factoryName="ScalaTest" temporary="true" show_console_on_std_err="false" show_console_on_std_out="false">
       <module name="advent-of-code-2022" />
       <option name="allowRunningInParallel" value="false" />
       <option name="projectPathOnTarget" />
@@ -109,28 +107,21 @@
         <list />
       </option>
       <option name="testKind" value="Class" />
+      <option name="shortenClasspath" value="NONE" />
       <option name="testClassPath" value="aoc2022.common.CalorieCalculatorTest" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="CalorieCalculatorTest" type="ScalaTestRunConfiguration" factoryName="ScalaTest" temporary="true" nameIsGenerated="true" show_console_on_std_err="false" show_console_on_std_out="false">
-      <module name="advent-of-code-2022" />
-      <option name="allowRunningInParallel" value="false" />
-      <option name="projectPathOnTarget" />
-      <option name="selectedOptions">
-        <list />
-      </option>
-      <option name="testKind" value="Class" />
-      <option name="testClassPath" value="aoc2022.Day1.CalorieCalculatorTest" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
+    <list>
+      <item itemvalue="Application.aoc2022.day2.main" />
+      <item itemvalue="Application.main" />
+      <item itemvalue="ScalaTest.CalorieCalculatorTest" />
+    </list>
     <recent_temporary>
       <list>
+        <item itemvalue="ScalaTest.CalorieCalculatorTest" />
         <item itemvalue="Application.aoc2022.day2.main" />
-        <item itemvalue="ScalaTest.CalorieCalculatorTest (1)" />
         <item itemvalue="Application.main" />
         <item itemvalue="ScalaTest.CalorieCalculatorTest" />
       </list>
@@ -162,13 +153,21 @@
       <option name="project" value="LOCAL" />
       <updated>1679477315805</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Day 1 part 2">
+      <created>1679478224735</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1679478224735</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Day 1 code" />
     <MESSAGE value="Refactoring of Day 1's code" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactoring of Day 1's code" />
+    <MESSAGE value="Day 1 part 2" />
+    <option name="LAST_COMMIT_MESSAGE" value="Day 1 part 2" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

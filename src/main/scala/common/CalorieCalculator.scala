@@ -33,11 +33,11 @@ object CalorieCalculator {
     case x => x.max
   }
 
-  private def findTopN(input: List[List[Int]], n: Int = 3): List[Int] = input.map(_.sum) match {
+  def findTopN(input: List[List[Int]], n: Int = 3): List[Int] = input.map(_.sum) match {
     case Nil => throw new IllegalArgumentException(s"Empty input. Cannot find the top $n values.")
     case x => x.sorted.reverse.take(n)
   }
-  
+
   def findSumOfTopN(input: List[List[Int]], n: Int = 3): Int = findTopN(input, n).sum
 }
 

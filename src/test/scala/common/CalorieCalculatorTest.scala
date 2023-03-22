@@ -78,5 +78,11 @@ class CalorieCalculatorTest extends UnitSpec {
             val expected = List(23, 12, 9)
             CalorieCalculator.findTopN(input) should be(expected)
         }
+
+        "find the sum of the top 2 values in 5 groups of values" in {
+            val input = List(List(1, 2, 3), List(3, 3, 3), List(5, 5, 2), List(1, 1, 1), List(10, 5, 8))
+            val expected = 35
+            CalorieCalculator.findSumOfTopN(input, 2) should be(expected)
+        }
     }
 }
