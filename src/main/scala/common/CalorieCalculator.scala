@@ -1,38 +1,38 @@
 package aoc2022
-package Day1
-
+package common
 
 import scala.io.Source
 
-@main def main(): Unit = {
-
-  val filename = "day1-input.txt"
+def loadData(filename: String): List[List[Int]] = {
   val source = Source.fromFile(filename)
-  val calorieList = try {
+  try {
     CalorieCalculator.parseInput(source.getLines())
   } finally source.close()
-  println(s"Answer is: ${calorieList.max}")
 }
-
 
 object CalorieCalculator {
 
-  def parseInput(input: String): List[Int] = {
+  def parseInput(input: String): List[List[Int]] = {
     if (input == null || input.isEmpty)
       List.empty
     else
-      val list = input.split(";;").toList
+      input.split(";;").toList
         .map(_.split(";"))
         .map(_.map(_.toInt).toList)
-      list.map(_.sum)
   }
-  def parseInput(input: Iterator[String]): List[Int] = {
+  def parseInput(input: Iterator[String]): List[List[Int]] = {
     if (input == null || input.isEmpty)
       List.empty
     else
       val inputStr = input.map(_.trim).mkString(";")
       parseInput(inputStr)
   }
+
+  def findMax(input: List[List[Int]]): Int = input.map(_.sum) match {
+    case Nil => throw new IllegalArgumentException("Empty input. Cannot find max.")
+    case x => x.max
+  }
 }
+
 class CalorieCalculator() {
 }
