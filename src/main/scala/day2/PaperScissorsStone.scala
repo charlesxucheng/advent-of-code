@@ -19,4 +19,18 @@ enum PaperScissorsStone {
     else if this ties that then Outcome.Draw
     else Outcome.Lose
   }
+
+  import Outcome.*
+
+  // Returns the shape that would produce the given outcome when the first shape is this one
+  def findShapeForOutcome(Outcome: Outcome): PaperScissorsStone = Outcome match
+    case Win => this match
+      case Paper => Scissors
+      case Scissors => Stone
+      case Stone => Paper
+    case Lose => this match
+      case Paper => Stone
+      case Scissors => Paper
+      case Stone => Scissors
+    case Draw => this
 }

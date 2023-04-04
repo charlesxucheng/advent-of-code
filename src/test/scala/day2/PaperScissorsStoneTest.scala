@@ -83,4 +83,37 @@ class PaperScissorsStoneTest extends UnitSpec {
     val expected = List(3, 9, 6).sum
     PaperScissorsStoneScoreCalculator.calculateTotalScore(input) shouldBe expected
   }
+
+  "Given a desired outcome and the first shape of a game, then the second shape can be calculated correctly" in {
+    Paper.findShapeForOutcome(Win) shouldBe Scissors
+    Paper.findShapeForOutcome(Lose) shouldBe Stone
+    Paper.findShapeForOutcome(Draw) shouldBe Paper
+    Scissors.findShapeForOutcome(Win) shouldBe Stone
+    Scissors.findShapeForOutcome(Lose) shouldBe Paper
+    Scissors.findShapeForOutcome(Draw) shouldBe Scissors
+    Stone.findShapeForOutcome(Win) shouldBe Paper
+    Stone.findShapeForOutcome(Lose) shouldBe Scissors
+    Stone.findShapeForOutcome(Draw) shouldBe Stone
+  }
+
+  "Values are mapped correctly under the second mapping scheme in Part 2" in {
+    PaperScissorsStoneMapper.fromStringCol2Part2('A','Y') shouldBe (Draw, Stone)
+    PaperScissorsStoneMapper.fromStringCol2Part2('B','Z') shouldBe (Win, Scissors)
+    PaperScissorsStoneMapper.fromStringCol2Part2('C','X') shouldBe (Lose, Paper)
+  }
+
+  "SPart 2: core is calculated correctly for a single game for" in {
+    PaperScissorsStoneScoreCalculator.calculateScorePart2(List((Draw, Paper))) shouldBe List(5)
+  }
+
+  "Part 2: Total score is calculated correctly for multiple games" in {
+    val input = List(
+      (Win, Paper),
+      (Draw, Stone),
+      (Lose, Scissors)
+    )
+    val expected = List(8, 4, 3)
+    PaperScissorsStoneScoreCalculator.calculateTotalScorePart2(input) shouldBe expected.sum
+  }
+
 }
