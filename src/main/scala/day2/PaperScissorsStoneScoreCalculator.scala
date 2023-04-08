@@ -3,6 +3,7 @@ package day2
 
 import scala.io.Source
 import PaperScissorsStone._
+import PaperScissorsStoneMapper._
 
 def loadData[T1, T2](filename: String)(parser: Iterator[String] => List[(T1, T2)]): List[(T1, T2)] = {
   val source = Source.fromFile(filename)
@@ -40,7 +41,7 @@ object PaperScissorsStoneMapper {
 object PaperScissorsStoneScoreCalculator {
   def parseInput(lines: Iterator[String]): List[(PaperScissorsStone, PaperScissorsStone)] = {
     lines.map(_.split(" ").toList).map {
-      case List(p1, p2) => (PaperScissorsStoneMapper.fromStringCol1(p1.charAt(0)), PaperScissorsStoneMapper.fromStringCol2(p2.charAt(0)))
+      case List(p1, p2) => (fromStringCol1(p1.charAt(0)), fromStringCol2(p2.charAt(0)))
       case _ => throw new IllegalArgumentException("Invalid input")
     }.toList
   }
