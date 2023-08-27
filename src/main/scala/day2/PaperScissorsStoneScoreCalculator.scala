@@ -5,13 +5,6 @@ import scala.io.Source
 import PaperScissorsStone._
 import PaperScissorsStoneMapper._
 
-def loadData[T1, T2](filename: String)(parser: Iterator[String] => List[(T1, T2)]): List[(T1, T2)] = {
-  val source = Source.fromFile(filename)
-  try {
-    parser(source.getLines())
-  } finally source.close()
-}
-
 object PaperScissorsStoneMapper {
   def fromStringCol1(s: Char): PaperScissorsStone = s match
     case 'A' => PaperScissorsStone.Stone

@@ -1,6 +1,8 @@
 package aoc2022
 package day2
 
+import common.Utils.loadData
+
 import scala.io.Source
 
 @main def main(): Unit = {
