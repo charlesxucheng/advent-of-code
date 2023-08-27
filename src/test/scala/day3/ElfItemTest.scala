@@ -7,7 +7,7 @@ import ElfItem.*
 
 class ElfItemTest extends UnitSpec {
   "An ElfItem" should {
-    "can be constructed from a string" in {
+    "can be constructed from a valid Char" in {
       val testData = Seq('a', 'z', 'A', 'Z', 'f', 'H')
       testData.foreach { t =>
         ElfItem(t) shouldBe an [ElfItem]
@@ -16,7 +16,25 @@ class ElfItemTest extends UnitSpec {
 
     }
     "cannot be constructed from an invalid Char" in {
-      a [IllegalArgumentException] should be thrownBy ElfItem('%')
+      val testData = Seq('&', ' ', '+', '\u3333')
+      testData.foreach { a [IllegalArgumentException] should be thrownBy ElfItem(_) }
+    }
+
+    "have its priority value" in {
+      val testData = Table(
+        ("ElfItem", "Priority"),
+        ('a', 1),
+        ('z', 26),
+        ('A', 27),
+        ('Z', 52),
+        ('g', 7),
+        ('X', 50)
+      )
+      forAll(testData) { (c: Char, p: Int) => {
+        ElfItem(c).priority shouldBe p
+      }
+
+      }
     }
   }
 }

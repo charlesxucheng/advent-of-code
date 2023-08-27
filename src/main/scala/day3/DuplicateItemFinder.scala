@@ -21,5 +21,5 @@ object DuplicateItemFinder {
   def parseInput(lines: Iterator[String]): Iterator[List[ElfItem]] =
     lines.map(ElfItem.from)
 
-
+  def sumPriority(items: Set[ElfItem]): Int = items.map(_.priority).sum
 }
