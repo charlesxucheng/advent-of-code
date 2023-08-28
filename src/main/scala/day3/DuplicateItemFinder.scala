@@ -25,4 +25,22 @@ object DuplicateItemFinder {
 
   def sumAllPriority(input: List[List[ElfItem]]): Int =
     input.map(findCommonItems).map(sumPriority).sum
+
+  def parseInput2(lines: Iterator[String]): List[(List[ElfItem], List[ElfItem], List[ElfItem])] = {
+    val input = lines.toList
+    require(input.size % 3 == 0)
+    val result = input.grouped(3).toList.map(group => {
+      (ElfItem.from(group.head), ElfItem.from(group(1)), ElfItem.from(group(2)))
+    })
+    result
+  }
+
+  def sumAllBadgePriority(input: List[(List[ElfItem], List[ElfItem], List[ElfItem])]): Int = {
+    input.map(tuple => {
+      val badges = tuple._1.toSet.intersect(tuple._2.toSet).intersect(tuple._3.toSet)
+      badges.map(_.priority).sum
+    }).sum
+  }
+
 }
+
