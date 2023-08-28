@@ -102,7 +102,7 @@ class PaperScissorsStoneTest extends UnitSpec {
     PaperScissorsStoneMapper.fromStringCol2Part2('C','X') shouldBe (Lose, Paper)
   }
 
-  "SPart 2: core is calculated correctly for a single game for" in {
+  "Part 2: core is calculated correctly for a single game for" in {
     PaperScissorsStoneScoreCalculator.calculateScorePart2(List((Draw, Paper))) shouldBe List(5)
   }
 
