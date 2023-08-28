@@ -18,8 +18,11 @@ object DuplicateItemFinder {
     left.toSet.intersect(right.toSet)
   }
 
-  def parseInput(lines: Iterator[String]): Iterator[List[ElfItem]] =
-    lines.map(ElfItem.from)
+  def parseInput(lines: Iterator[String]): List[List[ElfItem]] =
+    lines.map(ElfItem.from).toList
 
   def sumPriority(items: Set[ElfItem]): Int = items.map(_.priority).sum
+
+  def sumAllPriority(input: List[List[ElfItem]]): Int =
+    input.map(findCommonItems).map(sumPriority).sum
 }

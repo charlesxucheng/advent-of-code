@@ -34,11 +34,18 @@ class DuplicateItemFinderTest extends UnitSpec {
         DuplicateItemFinder.sumPriority(DuplicateItemFinder.findCommonItems(List.empty)) shouldBe 0
       }
     }
-    "given two strings" should {
+    "given two strings representing ElfItems" should {
       "sum their priority correctly" in {
         forAll(testData) { (s: String, _: Set[ElfItem], p: Int) => {
           DuplicateItemFinder.sumPriority(DuplicateItemFinder.findCommonItems(s)) shouldBe p
         }}
+      }
+    }
+    "given a list of strings representing ElfItems" should {
+      "sum their priorities correctly" in {
+        val testData = Seq("AbccDa", "YfzHaaaXfGbLkx", "XX", "AbccEAce", "dddd", "AXFPPFXA").iterator
+        val elfItems = DuplicateItemFinder.parseInput(testData)
+        DuplicateItemFinder.sumAllPriority(elfItems) shouldBe 244
       }
     }
   }
