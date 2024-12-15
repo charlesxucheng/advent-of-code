@@ -1,12 +1,12 @@
-package aoc2022
-package day3
+package aoc
+package aco2022.day4
 
-import common.Utils.loadData
-
-import aoc2022.day2.PaperScissorsStoneScoreCalculator
+import aoc.aco2022.day2.PaperScissorsStoneScoreCalculator
+import aoc.aco2022.day3.DuplicateItemFinder
+import aoc2022.common.Utils.loadData
 
 @main def main(): Unit = {
-  val filename = "day3-input.txt"
+  val filename = "day4-input.txt"
   val part1Data = loadData(filename)(DuplicateItemFinder.parseInput)
   println(s"Part1: the total priority is: ${DuplicateItemFinder.sumAllPriority(part1Data)}")
   val part2Data = loadData(filename)(DuplicateItemFinder.parseInput2)

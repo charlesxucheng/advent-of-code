@@ -1,8 +1,8 @@
-package aoc2022
-package day1
+package aoc
+package aco2022.day1
 
 import scala.io.Source
-import common.Utils._
+import aoc2022.common.Utils._
 @main def main(): Unit = {
 
   val filename = "day1-input.txt"

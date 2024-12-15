@@ -1,5 +1,5 @@
-package aoc2022
-package day2
+package aoc
+package aco2022.day2
 
 enum Outcome {
   case Win, Lose, Draw
@@ -7,14 +7,14 @@ enum Outcome {
 enum PaperScissorsStone {
   case Paper, Scissors, Stone
 
-  private def beats(that: PaperScissorsStone): Boolean = this match
+  private infix def beats(that: PaperScissorsStone): Boolean = this match
     case Paper => that == Stone
     case Scissors => that == Paper
     case Stone => that == Scissors
 
-  private def ties(that: PaperScissorsStone): Boolean = this == that
+  private infix def ties(that: PaperScissorsStone): Boolean = this == that
 
-  def vs(that: PaperScissorsStone): Outcome = {
+  infix def vs(that: PaperScissorsStone): Outcome = {
     if this beats that then Outcome.Win
     else if this ties that then Outcome.Draw
     else Outcome.Lose

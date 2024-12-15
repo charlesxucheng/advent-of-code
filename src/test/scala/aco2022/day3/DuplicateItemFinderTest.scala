@@ -1,7 +1,10 @@
-package aoc2022
-package day3
+package aoc
+package aco2022.day3
 
-import ElfItem.ElfItem
+import aco2022.day3.DuplicateItemFinder
+import aco2022.day3.ElfItem.ElfItem
+
+import aoc2022.UnitSpec
 import org.scalatest.matchers.should.Matchers.shouldBe
 
 class DuplicateItemFinderTest extends UnitSpec {

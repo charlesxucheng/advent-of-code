@@ -1,8 +1,14 @@
-package aoc2022
-package day2
+package aoc
+package aco2022.day2
 
-import PaperScissorsStone._
-import Outcome._
+import aco2022.day2.Outcome.*
+import aco2022.day2.PaperScissorsStone.*
+import aco2022.day2.{
+  PaperScissorsStoneMapper,
+  PaperScissorsStoneScoreCalculator
+}
+
+import aoc2022.UnitSpec
 import org.scalatest.matchers.should.Matchers.shouldBe
 class PaperScissorsStoneTest extends UnitSpec {
   "Paper wins over stone" in {

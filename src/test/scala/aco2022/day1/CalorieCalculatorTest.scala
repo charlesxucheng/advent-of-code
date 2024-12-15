@@ -1,8 +1,9 @@
-package aoc2022
-package day1
+package aoc
+package aco2022.day1
 
-import day1.CalorieCalculator
+import aco2022.day1.CalorieCalculator
 
+import aoc2022.UnitSpec
 import org.scalatest.matchers.should.Matchers.should
 
 class CalorieCalculatorTest extends UnitSpec {

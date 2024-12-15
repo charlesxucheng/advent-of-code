@@ -1,5 +1,5 @@
-package aoc2022
-package day3
+package aoc
+package aco2022.day3
 
 object ElfItem {
   opaque type ElfItem = Char

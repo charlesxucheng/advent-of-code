@@ -1,5 +1,5 @@
-package aoc2022
-package day2
+package aoc
+package aco2022.day2
 
 import scala.io.Source
 import PaperScissorsStone._

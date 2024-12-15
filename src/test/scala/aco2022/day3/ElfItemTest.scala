@@ -1,9 +1,10 @@
-package aoc2022
-package day3
+package aoc
+package aco2022.day3
 
-import org.scalatest.matchers.should.Matchers._
+import aco2022.day3.ElfItem.*
 
-import ElfItem.*
+import aoc2022.UnitSpec
+import org.scalatest.matchers.should.Matchers.*
 
 class ElfItemTest extends UnitSpec {
   "An ElfItem" should {
