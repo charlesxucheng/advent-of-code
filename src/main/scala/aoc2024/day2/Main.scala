@@ -4,7 +4,6 @@ package aoc2024.day2
 import aoc2024.day2.Trend.{Ascending, Descending, Equal}
 
 import aoc2022.common.Utils.loadData
-import jdk.jfr.Threshold
 
 import scala.annotation.tailrec
 import scala.io.Source
@@ -37,9 +36,17 @@ case class Report(numbers: List[Int]) {
       isSafeRec(numbers.head, numbers.tail, tolerance)
     else
       isSafeRec(numbers.head, numbers.tail, tolerance) || isSafeRec(numbers.tail.head, numbers.tail.tail, tolerance - 1)
-
+      
   @tailrec
   private def isSafeRec(head: Int, tail: List[Int], tolerance: Int): Boolean = {
+    
+    inline def checkThreshold(lowerBound: Int, upperBound: Int, x: Int, xs: List[Int]) =
+      if (x - head >= lowerBound && x - head <= upperBound)
+        isSafeRec(x, xs, tolerance)
+      else if (tolerance > 0)
+        isSafeRec(head, xs, tolerance - 1)
+      else
+        false
 
 //    println(s"Entering isSafeRec: $prev $remainingNumbers $trend $tolerance")
 
@@ -50,19 +57,9 @@ case class Report(numbers: List[Int]) {
         if (trendOfPair == dominantTrend)
           trendOfPair match {
             case Ascending =>
-              if (x - head >= 1 && x - head <= 3)
-                isSafeRec(x, xs, tolerance)
-              else if (tolerance > 0)
-                isSafeRec(head, xs, tolerance - 1)
-              else
-                false
+              checkThreshold(1, 3, x, xs)
             case Descending =>
-              if (x - head >= -3 && x - head <= -1)
-                isSafeRec(x, xs,  tolerance)
-              else if (tolerance > 0)
-                isSafeRec(head, xs, tolerance - 1)
-              else
-                false
+              checkThreshold(-3, -1, x, xs)
             case Equal =>
               throw IllegalStateException("Not possible")
           }

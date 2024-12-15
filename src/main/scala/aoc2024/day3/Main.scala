@@ -1,15 +1,16 @@
 package aoc
 package aoc2024.day3
 
+import aoc2024.day3.Multiplier.{collectPartsRec, sumOfProducts}
+
 import scala.annotation.tailrec
 import scala.io.Source
 import scala.jdk.Accumulator
-import scala.util.matching.Regex
 
-@main def main(): Unit = {
+object Multiplier {
 
-  val enablePattern = "do()"
-  val disablePattern = "don't()"
+  private val enablePattern = "do()"
+  private val disablePattern = "don't()"
 
   @tailrec
   def collectPartsRec(input: String, accumulated: String, enabled: Boolean): String = {
@@ -24,10 +25,7 @@ import scala.util.matching.Regex
     }
   }
 
-  val filename = "aoc2024-day3-input.txt"
-  val source = Source.fromFile(filename)
-
-  def sumOfProducts(content: String) = {
+  def sumOfProducts(content: String): Int = {
 
     val pattern = "mul\\((\\d{1,3}),(\\d{1,3})\\)".r
 
@@ -37,6 +35,13 @@ import scala.util.matching.Regex
       .sum
     total
   }
+}
+
+@main def main(): Unit = {
+
+  val filename = "aoc2024-day3-input.txt"
+  val source = Source.fromFile(filename)
+
 
   try {
     val content = source.getLines().reduceLeft(_ + _)

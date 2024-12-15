@@ -1,8 +1,8 @@
 package aoc
 package aco2022.day4
 
-import aoc.aco2022.day2.PaperScissorsStoneScoreCalculator
-import aoc.aco2022.day3.DuplicateItemFinder
+import aco2022.day3.DuplicateItemFinder
+
 import aoc2022.common.Utils.loadData
 
 @main def main(): Unit = {
