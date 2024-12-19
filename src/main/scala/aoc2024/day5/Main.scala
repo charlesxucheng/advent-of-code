@@ -1,10 +1,11 @@
 package aoc
 package aoc2024.day5
 
-import aoc2024.day5.RuleValidator.{checkNoDuplicates, findValidUpdates, parseRulesInput, midEntries}
-
+import aoc2024.day5.RuleValidator.{checkNoDuplicates, correctPageOrders, findInvalidPageUpdates, findValidPageUpdates, midEntries, parseRulesInput}
 import common.NumberList
 import common.Utils.loadData
+
+import scala.annotation.tailrec
 
 object RuleValidator {
 
@@ -13,16 +14,21 @@ object RuleValidator {
       .map(pair => Rule(pair(0).toInt, pair(1).toInt))
       .toList
 
-  def findValidUpdates(rules: List[Rule], pages: List[List[Int]]): List[List[Int]] = {
-    val a = pages.filter(p => {
-      !rules.exists(rule => {
-        val index1 = p.indexOf(rule.first)
-        val index2 = p.indexOf(rule.second)
-        index1 >= 0 && index2 >= 0 && index1 > index2
-      })
+  def findValidPageUpdates(rules: List[Rule], pages: List[List[Int]]): List[List[Int]] =
+    pages.filter(p => allRulesFollowed(rules, p))
+
+  def findInvalidPageUpdates(rules: List[Rule], pages: List[List[Int]]): List[List[Int]] =
+    pages.filter(p => someRulesNotFollowed(rules, p))
+
+  private def someRulesNotFollowed(rules: List[Rule], pages: List[Int]) = {
+    rules.exists(rule => {
+      val index1 = pages.indexOf(rule.first)
+      val index2 = pages.indexOf(rule.second)
+      index1 >= 0 && index2 >= 0 && index1 > index2
     })
-    a
   }
+
+  private def allRulesFollowed(rules: List[Rule], pages: List[Int]) = !someRulesNotFollowed(rules, pages)
 
   def midEntries(validInputs: List[List[Int]]): List[Int] = validInputs.map(l => l(l.size / 2))
 
@@ -30,6 +36,29 @@ object RuleValidator {
     allPages.map(pages => {
       pages.groupBy(x => x).forall((k, v) => v.length == 1)
     }).forall(x => x)
+
+  def correctPageOrders(pageUpdates: List[List[Int]], rules: List[Rule]): List[List[Int]] = {
+    pageUpdates.map { pages => {
+      updatePageOrder(pages, rules, rules)
+    }}
+  }
+
+  @tailrec
+  private def updatePageOrder(oneSetOfUpdates: List[Int], remainingRules: List[Rule], allRules: List[Rule]): List[Int] = {
+    remainingRules match {
+      case Nil => oneSetOfUpdates
+      case head::tail =>
+        val index1 =oneSetOfUpdates.indexOf(head.first)
+        val index2 = oneSetOfUpdates.indexOf(head.second)
+         if (index1 >= 0 && index2 >= 0 && index1 > index2)
+           // If there is a swap of elements, recheck all rules as some already passed rules may be violated by the swap.
+           updatePageOrder(swapElements(oneSetOfUpdates, index1, index2), allRules, allRules)
+        else
+          updatePageOrder(oneSetOfUpdates, tail, allRules)
+    }
+  }
+
+  private def swapElements(list: List[Int], i: Int, j: Int) = list.updated(j, list(i)).updated(i, list(j))
 }
 
 case class Rule(first: Int, second: Int)
@@ -45,10 +74,19 @@ case class Rule(first: Int, second: Int)
 
   println(s"No list of updated pages contain duplicates: ${checkNoDuplicates(data)}")
 
-  val validInputs = findValidUpdates(rules, data)
+  val validInputs = findValidPageUpdates(rules, data)
   println(validInputs)
 
   val mid = midEntries(validInputs)
   println(mid)
-  println(s"Sum of mid entries: ${mid.sum}")
+  println(s"Part 1: Sum of mid entries: ${mid.sum}")
+
+  val invalidInputs = findInvalidPageUpdates(rules, data)
+  println(invalidInputs)
+
+  val correctedInvalidInputs = correctPageOrders(invalidInputs, rules)
+  val mid2 = midEntries(correctedInvalidInputs)
+  println(mid2)
+  println(s"Part 2: Sum of mid entries: ${mid2.sum}")
+
 }
