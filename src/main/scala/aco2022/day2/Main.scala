@@ -1,7 +1,7 @@
 package aoc
 package aco2022.day2
 
-import aoc2022.common.Utils.loadData
+import common.Utils.loadData
 
 import scala.io.Source
 

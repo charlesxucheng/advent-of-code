@@ -3,7 +3,7 @@ package aco2022.day4
 
 import aco2022.day3.DuplicateItemFinder
 
-import aoc2022.common.Utils.loadData
+import common.Utils.loadData
 
 @main def main(): Unit = {
   val filename = "day4-input.txt"

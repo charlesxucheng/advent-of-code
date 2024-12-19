@@ -1,7 +1,7 @@
 package aoc
 package aoc2024.day4
 
-import aoc2022.common.Utils.loadData
+import common.Utils.loadData
 
 import scala.annotation.tailrec
 import scala.io.Source

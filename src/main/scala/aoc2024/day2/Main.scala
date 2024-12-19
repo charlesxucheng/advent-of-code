@@ -3,19 +3,11 @@ package aoc2024.day2
 
 import aoc2024.day2.Trend.{Ascending, Descending, Equal}
 
-import aoc2022.common.Utils.loadData
+import common.NumberList
+import common.Utils.loadData
 
 import scala.annotation.tailrec
 import scala.io.Source
-
-object NumberList {
-  def parseInput(lines: Iterator[String]): List[List[Int]] =
-    lines
-      .map(_.split(" ")
-        .map(_.toInt)
-        .toList)
-      .toList
-}
 
 enum Trend {
   case Ascending
@@ -74,7 +66,7 @@ case class Report(numbers: List[Int]) {
 @main def main(): Unit = {
 
   val filename = "aoc2024-day2-input.txt"
-  val reports = loadData(filename)(NumberList.parseInput)
+  val reports = loadData(filename)(NumberList.parseInput(" "))
   reports.foreach(x => {
     val report = Report(x)
     val safe0 = report.isSafe(0)

@@ -1,4 +1,4 @@
-package aoc2022
+package aoc
 package common
 
 import scala.io.Source
@@ -11,4 +11,13 @@ object Utils {
       parser(source.getLines())
     } finally source.close()
   }
+}
+
+object NumberList {
+  def parseInput(delimiter: String)(lines: Iterator[String]): List[List[Int]] =
+    lines
+      .map(_.split(delimiter)
+        .map(_.toInt)
+        .toList)
+      .toList
 }

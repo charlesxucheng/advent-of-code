@@ -1,7 +1,7 @@
 package aoc
 package aco2022.day3
 
-import aoc2022.common.Utils.loadData
+import common.Utils.loadData
 
 @main def main(): Unit = {
   val filename = "day3-input.txt"

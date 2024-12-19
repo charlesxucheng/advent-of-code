@@ -2,7 +2,7 @@ package aoc
 package aco2022.day1
 
 import scala.io.Source
-import aoc2022.common.Utils._
+import common.Utils._
 @main def main(): Unit = {
 
   val filename = "day1-input.txt"
