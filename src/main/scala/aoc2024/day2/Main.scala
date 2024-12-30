@@ -2,12 +2,10 @@ package aoc
 package aoc2024.day2
 
 import aoc2024.day2.Trend.{Ascending, Descending, Equal}
-
 import common.NumberList
 import common.Utils.loadData
 
 import scala.annotation.tailrec
-import scala.io.Source
 
 enum Trend {
   case Ascending

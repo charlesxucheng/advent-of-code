@@ -21,3 +21,7 @@ object NumberList {
         .toList)
       .toList
 }
+
+object CharList {
+  def parseInput(input: Iterator[String]): List[List[Char]] = input.map(line => line.toList).toList
+}

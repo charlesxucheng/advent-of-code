@@ -1,25 +1,12 @@
 package aoc
 package aoc2024.day6
 
-import aoc2024.day6.Direction.{East, North, South, West}
 import aoc2024.day6.MazeWalker.{addObstacle, findStartingLocation, parseInput}
+import common.Direction.{East, North, South, West}
+import common.{Direction, Position}
 import common.Utils.loadData
 
 import scala.annotation.tailrec
-
-// x = col, y = row
-case class Position(x: Int, y: Int)
-
-enum Direction {
-  case North, East, South, West
-
-  def turnRight: Direction = this match {
-    case North => East
-    case East => South
-    case South => West
-    case West => North
-  }
-}
 
 object MazeWalker {
   def parseInput(input: Iterator[String]): List[Array[Char]] = input.map(line => line.toArray).toList

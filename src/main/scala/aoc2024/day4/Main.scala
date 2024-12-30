@@ -1,12 +1,8 @@
 package aoc
 package aoc2024.day4
 
+import common.CharList
 import common.Utils.loadData
-
-import scala.annotation.tailrec
-import scala.io.Source
-import scala.jdk.Accumulator
-import scala.util.matching.Regex
 
 enum CheckDirection(x: Int, y: Int) {
   private case HorizontalRight extends CheckDirection(1, 0)
@@ -25,7 +21,6 @@ enum CheckDirection(x: Int, y: Int) {
 }
 
 object WordSearcher {
-  def parseInput(input: Iterator[String]): List[List[Char]] = input.map(line => line.toList).toList
 
   def countWordOccurrences(word: String, allChars: List[List[Char]]): Int = {
     var count = 0
@@ -81,7 +76,7 @@ object WordSearcher {
 
   val filename = "aoc2024-day4-input.txt"
 //    val filename = "test.txt"
-  val content = loadData(filename)(WordSearcher.parseInput)
+  val content = loadData(filename)(CharList.parseInput)
   val word = "XMAS"
   val occurrences = WordSearcher.countWordOccurrences(word, content)
   println(s"The word $word occurred $occurrences times in the input.")
