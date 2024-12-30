@@ -5,7 +5,7 @@ import scala.io.Source
 
 object Utils {
 
-  def loadData[T](filename: String)(parser: Iterator[String] => List[T]): List[T] = {
+  def loadData[T, C[_]](filename: String)(parser: Iterator[String] => C[T]): C[T] = {
     val source = Source.fromFile(filename)
     try {
       parser(source.getLines())
