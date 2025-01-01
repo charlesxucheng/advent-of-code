@@ -9,8 +9,8 @@ enum Direction {
 
   def turnRight: Direction = this match {
     case North => East
-    case East => South
+    case East  => South
     case South => West
-    case West => North
+    case West  => North
   }
 }

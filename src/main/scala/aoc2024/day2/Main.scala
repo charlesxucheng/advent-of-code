@@ -17,7 +17,8 @@ case class Report(numbers: List[Int]) {
   require(numbers.size > 4)
 
   val increasingDiffCount: Int = numbers.zip(numbers.tail).count(_ < _)
-  val dominantTrend: Trend = if (increasingDiffCount > (numbers.size / 2)) Ascending else Descending
+  val dominantTrend: Trend =
+    if (increasingDiffCount > (numbers.size / 2)) Ascending else Descending
 
   override def toString: String = numbers.toString()
 
@@ -25,12 +26,21 @@ case class Report(numbers: List[Int]) {
     if (tolerance == 0)
       isSafeRec(numbers.head, numbers.tail, tolerance)
     else
-      isSafeRec(numbers.head, numbers.tail, tolerance) || isSafeRec(numbers.tail.head, numbers.tail.tail, tolerance - 1)
-      
+      isSafeRec(numbers.head, numbers.tail, tolerance) || isSafeRec(
+        numbers.tail.head,
+        numbers.tail.tail,
+        tolerance - 1
+      )
+
   @tailrec
   private def isSafeRec(head: Int, tail: List[Int], tolerance: Int): Boolean = {
-    
-    inline def checkThreshold(lowerBound: Int, upperBound: Int, x: Int, xs: List[Int]) =
+
+    inline def checkThreshold(
+        lowerBound: Int,
+        upperBound: Int,
+        x: Int,
+        xs: List[Int]
+    ) =
       if (x - head >= lowerBound && x - head <= upperBound)
         isSafeRec(x, xs, tolerance)
       else if (tolerance > 0)
@@ -43,7 +53,8 @@ case class Report(numbers: List[Int]) {
     tail match {
       case Nil => true
       case x :: xs =>
-        val trendOfPair = if (head < x) Ascending else if (head > x) Descending else Equal
+        val trendOfPair =
+          if (head < x) Ascending else if (head > x) Descending else Equal
         if (trendOfPair == dominantTrend)
           trendOfPair match {
             case Ascending =>
@@ -70,7 +81,9 @@ case class Report(numbers: List[Int]) {
     val safe0 = report.isSafe(0)
     val safe1 = report.isSafe(1)
     if (safe0 == safe1)
-      println(s"$report | ${report.increasingDiffCount} | ${report.dominantTrend} | Safe(0): $safe0 | Safe(1): $safe1")
+      println(
+        s"$report | ${report.increasingDiffCount} | ${report.dominantTrend} | Safe(0): $safe0 | Safe(1): $safe1"
+      )
   })
 
   val safeReportsWithoutTolerance = reports.filter(Report(_).isSafe(0))

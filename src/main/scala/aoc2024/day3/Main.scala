@@ -13,15 +13,29 @@ object Multiplier {
   private val disablePattern = "don't()"
 
   @tailrec
-  def collectPartsRec(input: String, accumulated: String, enabled: Boolean): String = {
+  def collectPartsRec(
+      input: String,
+      accumulated: String,
+      enabled: Boolean
+  ): String = {
     if (enabled) {
       val index = input.indexOf(disablePattern)
       if (index == -1) accumulated
-      else collectPartsRec(input.drop(index + disablePattern.length), accumulated + input.take(index), false)
+      else
+        collectPartsRec(
+          input.drop(index + disablePattern.length),
+          accumulated + input.take(index),
+          false
+        )
     } else {
       val index = input.indexOf(enablePattern)
       if (index == -1) accumulated
-      else collectPartsRec(input.drop(index + enablePattern.length), accumulated, true)
+      else
+        collectPartsRec(
+          input.drop(index + enablePattern.length),
+          accumulated,
+          true
+        )
     }
   }
 
@@ -29,7 +43,8 @@ object Multiplier {
 
     val pattern = "mul\\((\\d{1,3}),(\\d{1,3})\\)".r
 
-    val total = pattern.findAllMatchIn(content)
+    val total = pattern
+      .findAllMatchIn(content)
       .map(matched => (matched.group(1).toInt, matched.group(2).toInt))
       .map(pair => pair._1 * pair._2)
       .sum
@@ -42,7 +57,6 @@ object Multiplier {
   val filename = "aoc2024-day3-input.txt"
   val source = Source.fromFile(filename)
 
-
   try {
     val content = source.getLines().reduceLeft(_ + _)
 
@@ -54,11 +68,9 @@ object Multiplier {
     println(s"Total: $total")
     println(s"Total with filtered content: $total2")
 
-  }
-  catch {
+  } catch {
     case e: Exception => println(e)
-  }
-  finally {
+  } finally {
     source.close()
   }
 
