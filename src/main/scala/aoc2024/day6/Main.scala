@@ -1,17 +1,13 @@
 package aoc
 package aoc2024.day6
 
-import aoc2024.day6.MazeWalker.{addObstacle, findStartingLocation, parseInput}
+import aoc2024.day6.MazeWalker.{addObstacle, findStartingLocation}
 import common.Direction.{East, North, South, West}
-import common.{Direction, Position}
 import common.Utils.loadData
-
+import common.{Direction, Position, TwoDimensionalArray}
 import scala.annotation.tailrec
 
 object MazeWalker {
-  def parseInput(input: Iterator[String]): List[Array[Char]] =
-    input.map(line => line.toArray).toList
-
   def findStartingLocation(map: Array[Array[Char]]): Option[(Int, Int)] = {
     for {
       row <- map.indices
@@ -99,7 +95,8 @@ object MazeWalker {
 
   val filename = "aoc2024-day6-input.txt"
 //  val filename = "test.txt"
-  val map = loadData(filename)(parseInput).toArray
+  val map =
+    loadData(filename)(TwoDimensionalArray.parseInput[Char](identity[Char]))
 
   val startLocation = findStartingLocation(map)
   startLocation.foreach { case (row, col) =>
