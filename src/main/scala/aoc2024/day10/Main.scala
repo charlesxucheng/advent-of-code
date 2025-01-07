@@ -1,13 +1,15 @@
 package aoc
 package aoc2024.day10
 
-import aoc2024.day10.TrailHead.{findTrailHeads, getTotalScore}
+import aoc2024.day10.TrailHead.{findTrailHeads, getTotalRating, getTotalScore}
+import common.TwoDimensionalArray.display
 import common.Utils.loadData
 import common.{Position, TwoDimensionalArray}
 import scala.annotation.tailrec
 
 type TopographicMap = Array[Array[Int]]
 type Height = Int
+type Path = Seq[Position]
 
 object TrailHead {
   private val startingHeight = 0
@@ -33,39 +35,48 @@ object TrailHead {
       p.x >= 0 && p.y >= 0 && p.x < map.head.length && p.y < map.length
     )
 
-  def findTrailHeads(map: TopographicMap): Seq[Set[Position]] = {
-    findStartingPoints(map).toSeq.map(position => {
+  def findTrailHeads(map: TopographicMap): Set[Set[Path]] = {
+    findStartingPoints(map).map(startingPosition => {
       println(
-        s"Finding Trailheads for Starting Point (${position.x} ${position.y})"
+        s"Finding Trailheads for Starting Point $startingPosition"
       )
-      val result = findTrailHeadsRec(map, Set(position), startingHeight)
-      println(s"Result: $result")
+      val result =
+        findTrailHeadsRec2(map, Set(Seq(startingPosition)), startingHeight)
+      println(s"Result Set Size: ${getTrailHeadScore(result)}")
       result
     })
   }
 
   @tailrec
-  private def findTrailHeadsRec(
+  private def findTrailHeadsRec2(
       map: TopographicMap,
-      accumulator: Set[Position],
+      accumulator: Set[Path],
       height: Height
-  ): Set[Position] = {
+  ): Set[Path] = {
     if (accumulator.isEmpty || height == endingHeight) {
       accumulator
     } else {
       val nextHeight = height + 1
-      val validPositions = accumulator.flatMap(position =>
+      val newPaths = accumulator.map(path =>
         TrailHead
-          .getAdjacentPositions(map, position)
+          .getAdjacentPositions(map, path.last)
           .filter(p => map(p.y)(p.x) == nextHeight)
+          .map(position => path.appended(position))
       )
-      findTrailHeadsRec(map, validPositions, nextHeight)
+
+      findTrailHeadsRec2(map, newPaths.flatten, nextHeight)
     }
   }
 
-  def getTotalScore(trailHeads: Seq[Set[Position]]): Int =
-    trailHeads.map(_.size).sum
+  private def getTrailHeadScore(paths: Set[Path]): Int = paths.map(_.last).size
 
+  def getTotalScore(pathsByStartingPoint: Set[Set[Path]]): Int =
+    pathsByStartingPoint.toSeq.map(getTrailHeadScore).sum
+
+  private def getTrailHeadRating(paths: Set[Path]): Int = paths.size
+
+  def getTotalRating(pathsByStartingPoint: Set[Set[Path]]): Long =
+    pathsByStartingPoint.toSeq.map(getTrailHeadRating).sum
 }
 
 @main def main(): Unit = {
@@ -75,15 +86,16 @@ object TrailHead {
   val topographicMap: Array[Array[Int]] =
     loadData(filename)(TwoDimensionalArray.parseInput(_.asDigit))
 
-  topographicMap.foreach(row => println(row.mkString("")))
+  display(topographicMap)
 
   TrailHead
     .findStartingPoints(topographicMap)
     .foreach(point => println(point.toString))
 
-  val trailHeads = findTrailHeads(topographicMap)
-  println(s"Number of trailheads: ${trailHeads.size}")
-  println(s"Trailheads: $trailHeads")
-  println(s"Total score of trailheads: ${getTotalScore(trailHeads)}")
+  val allPaths = findTrailHeads(topographicMap)
+
+  println(s"Number of trailheads: ${allPaths.size}")
+  println(s"Total score of trailheads: ${getTotalScore(allPaths)}")
+  println(s"Total rating of trailheads: ${getTotalRating(allPaths)}")
 
 }

@@ -35,4 +35,6 @@ object CharList {
 object TwoDimensionalArray {
   def parseInput[T: ClassTag](converter: Char => T)(input: Iterator[String]): Array[Array[T]] =
     input.map(line => line.toArray.map(converter)).toArray
+    
+  def display[T: ClassTag](input: Array[Array[T]]): Unit = input.foreach(row => println(row.mkString("")))
 }
