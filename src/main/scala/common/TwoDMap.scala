@@ -43,15 +43,17 @@ case class TwoDMap[T: ClassTag](map: Array[Array[T]]) {
   def updated(position: Position, value: T): TwoDMap[T] =
     TwoDMap(map.updated(position.y, map(position.y).updated(position.x, value)))
 
+  def allPositions: Seq[Position] = {
+    for {
+      row <- getRowRange
+      col <- getColRange
+    } yield Position(col, row)
+  }
+   
   def getAdjacentPositions(
       position: Position
   ): Set[Position] =
-    Set(
-      Position(position.x - 1, position.y),
-      Position(position.x + 1, position.y),
-      Position(position.x, position.y - 1),
-      Position(position.x, position.y + 1)
-    ).filter(contains)
+    position.cardinalPositions.filter(contains)
 }
 
 object TwoDMap {
