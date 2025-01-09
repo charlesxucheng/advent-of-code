@@ -1,29 +1,22 @@
 package aoc
 package aoc2024.day6
 
-import aoc2024.day6.MazeWalker.{addObstacle, findStartingLocation}
+import aoc2024.day6.MazeWalker.tryAddObstacle
 import common.Direction.{East, North, South, West}
 import common.Utils.loadData
-import common.{Direction, Position, TwoDimensionalArray}
+import common.{Direction, Position, TwoDMap, TwoDimensionalArray}
 import scala.annotation.tailrec
 
 object MazeWalker {
-  def findStartingLocation(map: Array[Array[Char]]): Option[(Int, Int)] = {
-    for {
-      row <- map.indices
-      col <- map(row).indices
-      if map(row)(col) == '^'
-    } yield (row, col)
-  }.headOption
 
-  private def onMapBoarder(
-      position: Position,
-      map: Array[Array[Char]]
-  ): Boolean =
-    position.x == 0 || position.x == map.head.length - 1 || position.y == 0 || position.y == map.length - 1
+//  private def onMapBoarder(
+//      position: Position,
+//      map: Array[Array[Char]]
+//  ): Boolean =
+//    position.x == 0 || position.x == map.head.length - 1 || position.y == 0 || position.y == map.length - 1
 
-  private def onObstacle(position: Position, map: Array[Array[Char]]): Boolean =
-    map(position.y)(position.x) == '#'
+  private def onObstacle(position: Position, map: TwoDMap[Char]): Boolean =
+    map.hasValue(position, '#')
 
   private def isLoop(
       rightTurnPosition: Position,
@@ -34,7 +27,7 @@ object MazeWalker {
 
   @tailrec
   def forward(
-      map: Array[Array[Char]],
+      map: TwoDMap[Char],
       position: Position,
       direction: Direction,
       positionsCovered: Set[Position],
@@ -63,8 +56,8 @@ object MazeWalker {
           positionsCovered,
           rightTurnPositions + ((position, direction))
         )
-    } else if (onMapBoarder(newPosition, map)) {
-      println(s"Reached boarder. New Position is $position")
+    } else if (map.isOnBorder(newPosition)) {
+      println(s"Reached border. New Position is $position")
       (false, positionsCovered + newPosition)
     } else {
       println(s"Moving forward. New Position is $newPosition")
@@ -78,14 +71,12 @@ object MazeWalker {
     }
   }
 
-  def addObstacle(
-      map: Array[Array[Char]],
+  def tryAddObstacle(
+      map: TwoDMap[Char],
       obstacle: Position
-  ): Option[Array[Array[Char]]] =
-    if (map(obstacle.y)(obstacle.x) == '.') {
-      val newMap = map.map(_.clone())
-      newMap(obstacle.y)(obstacle.x) = '#'
-      Some(newMap)
+  ): Option[TwoDMap[Char]] =
+    if (map.get(obstacle) == '.') {
+      Some(map.updated(obstacle, '#'))
     } else {
       None
     }
@@ -95,10 +86,9 @@ object MazeWalker {
 
   val filename = "aoc2024-day6-input.txt"
 //  val filename = "test.txt"
-  val map =
-    loadData(filename)(TwoDimensionalArray.parseInput[Char](identity[Char]))
+  val map = loadData(filename)(TwoDMap.parseInput(identity[Char]))
 
-  val startLocation = findStartingLocation(map)
+  val startLocation = map.findFirst('^')
   startLocation.foreach { case (row, col) =>
     println(s"Starting location is ($col, $row)")
     val result = MazeWalker.forward(
@@ -115,13 +105,13 @@ object MazeWalker {
 
   // Part 2
   val numberOfLoops = (for {
-    i <- map.head.indices
-    j <- map.indices
+    i <- map.getColRange
+    j <- map.getRowRange
   } yield {
     println(s"Checking loop for ($j, $i)")
-    val count = addObstacle(map, Position(j, i))
+    val count = tryAddObstacle(map, Position(j, i))
       .map(updatedMap => {
-        val loc = findStartingLocation(updatedMap).get
+        val loc = updatedMap.findFirst('^').get
         val startPosition = Position(loc._2, loc._1)
         val result = MazeWalker
           .forward(

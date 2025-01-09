@@ -2,12 +2,11 @@ package aoc
 package aoc2024.day10
 
 import aoc2024.day10.TrailHead.{findTrailHeads, getTotalRating, getTotalScore}
-import common.TwoDimensionalArray.display
 import common.Utils.loadData
-import common.{Position, TwoDimensionalArray}
+import common.{Position, TwoDMap, TwoDimensionalArray}
 import scala.annotation.tailrec
 
-type TopographicMap = Array[Array[Int]]
+type TopographicMap = TwoDMap[Int]
 type Height = Int
 type Path = Seq[Position]
 
@@ -16,24 +15,7 @@ object TrailHead {
   private val endingHeight = 9
 
   def findStartingPoints(map: TopographicMap): Set[Position] =
-    (for {
-      (row, rowIndex) <- map.zipWithIndex
-      (column, columnIndex) <- row.zipWithIndex
-      if map(rowIndex)(columnIndex) == startingHeight
-    } yield Position(columnIndex, rowIndex)).toSet
-
-  private def getAdjacentPositions(
-      map: TopographicMap,
-      position: Position
-  ): Set[Position] =
-    Set(
-      Position(position.x - 1, position.y),
-      Position(position.x + 1, position.y),
-      Position(position.x, position.y - 1),
-      Position(position.x, position.y + 1)
-    ).filter(p =>
-      p.x >= 0 && p.y >= 0 && p.x < map.head.length && p.y < map.length
-    )
+    map.findAll(startingHeight)
 
   def findTrailHeads(map: TopographicMap): Set[Set[Path]] = {
     findStartingPoints(map).map(startingPosition => {
@@ -58,9 +40,9 @@ object TrailHead {
     } else {
       val nextHeight = height + 1
       val newPaths = accumulator.map(path =>
-        TrailHead
-          .getAdjacentPositions(map, path.last)
-          .filter(p => map(p.y)(p.x) == nextHeight)
+        map
+          .getAdjacentPositions(path.last)
+          .filter(p => map.get(p) == nextHeight)
           .map(position => path.appended(position))
       )
 
@@ -83,10 +65,10 @@ object TrailHead {
 
   val filename = "aoc2024-day10-input.txt"
 //  val filename = "test.txt"
-  val topographicMap: Array[Array[Int]] =
-    loadData(filename)(TwoDimensionalArray.parseInput(_.asDigit))
+  val topographicMap: TwoDMap[Int] =
+    loadData(filename)(TwoDMap.parseInput(_.asDigit))
 
-  display(topographicMap)
+  topographicMap.display()
 
   TrailHead
     .findStartingPoints(topographicMap)
