@@ -66,14 +66,45 @@ object PlantRegion {
 
 case class PlantRegion(positions: Set[Position], map: TwoDMap[Char]) {
   def area: Int = positions.size
-  def perimeter: Int = area * 4 - allNeighbors.size
+  def perimeter: Int = area * 4 - allStrictNeighbors.size
+  def sides: Int =
+    if (area == 1) 4
+    else
+      inflate.allRelaxedNeighbors
+        .map(_.size match {
+          case 3 | 4 | 7 => true
+          case _         => false
+        })
+        .count(_ == true)
 
-  private def neighbors(position: Position): Set[Position] = {
+  private def strictNeighbors(position: Position): Set[Position] = {
     require(positions.contains(position))
     position.cardinalPositions.intersect(positions)
   }
 
-  private def allNeighbors: Seq[Position] = positions.toSeq.flatMap(neighbors)
+  private def allStrictNeighbors: Seq[Position] =
+    positions.toSeq.flatMap(strictNeighbors)
+
+  private def relaxedNeighbors(position: Position): Set[Position] = {
+    require(positions.contains(position))
+    position.neighboringPositions.intersect(positions)
+  }
+
+  private def allRelaxedNeighbors: Seq[Set[Position]] =
+    positions.toSeq.map(p => relaxedNeighbors(p))
+
+  private def inflate: PlantRegion =
+    PlantRegion(
+      positions.flatMap(p =>
+        Set(
+          Position(p.x * 2, p.y * 2),
+          Position(p.x * 2 + 1, p.y * 2),
+          Position(p.x * 2, p.y * 2 + 1),
+          Position(p.x * 2 + 1, p.y * 2 + 1)
+        )
+      ),
+      map
+    )
 
 }
 
@@ -90,12 +121,14 @@ case class PlantRegion(positions: Set[Position], map: TwoDMap[Char]) {
     {
       val area = region.area
       val perimeter = region.perimeter
+      val numberOfSides = region.sides
       println(
-        s"Region: ${map.get(region.positions.head)} - Are: $area, Perimeter: $perimeter, Product: ${area * perimeter}"
+        s"Region: ${map.get(region.positions.head)} - Are: $area, Perimeter: $perimeter, # Sides: $numberOfSides, Cost1: ${area * perimeter}, Cost2: ${area * numberOfSides}"
       )
-      area * perimeter
+      (area * perimeter, area * numberOfSides)
     }
   }
 
-  println(s"Part 1 Total Cost: ${costs.sum}")
+  println(s"Part 1 Total Cost: ${costs.map(_._1).sum}")
+  println(s"Part 2 Total Cost: ${costs.map(_._2).sum}")
 }

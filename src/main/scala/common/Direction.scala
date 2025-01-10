@@ -12,6 +12,12 @@ case class Position(x: Int, y: Int) {
     )
   }
 
+  def neighboringPositions: Set[Position] =
+    (x - 1 to x + 1)
+      .flatMap(i => (y - 1 to y + 1).map(j => Position(i, j)))
+      .filterNot(p => p == this)
+      .toSet
+
   override def toString: String = s"(Row:$y, Col:$x)"
 }
 
