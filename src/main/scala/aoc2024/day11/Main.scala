@@ -9,10 +9,20 @@ import scala.collection.MapView
 import scala.collection.immutable.HashMap
 
 object Stones {
-  private def applyRule(number: BigInt): Seq[BigInt] = {
-    if (number == 0) Seq(1)
-    else if (hasEvenDigits(number)) splitIntoTwo(number)
-    else Seq(number * 2024)
+  extension (number: BigInt) {
+
+    private def hasEvenDigits: Boolean =
+      number.toString.toList.size % 2 == 0 && number != 0
+
+    private def splitIntoTwo: Seq[BigInt] = {
+      require(number.hasEvenDigits)
+      val digits = number.toString.toList
+      val mid = digits.size / 2
+      val (left, right) = digits.splitAt(mid)
+      val leftNum = BigInt(left.mkString)
+      val rightNum = BigInt(right.mkString)
+      Seq(leftNum, rightNum)
+    }
   }
 
   def blink(numbers: Seq[BigInt], times: Int): BigInt = {
@@ -27,6 +37,12 @@ object Stones {
       val resultMap = transformRec(numberMap, times)
       resultMap.values.sum
     }
+  }
+
+  private def applyRule(number: BigInt): Seq[BigInt] = {
+    if (number == 0) Seq(1)
+    else if (number.hasEvenDigits) number.splitIntoTwo
+    else Seq(number * 2024)
   }
 
   @tailrec
@@ -55,19 +71,6 @@ object Stones {
           .view
       transformRec(newMap, times - 1)
     }
-  }
-
-  private def hasEvenDigits(l: BigInt): Boolean =
-    l.toString.toList.size % 2 == 0 && l != 0
-
-  private def splitIntoTwo(l: BigInt): Seq[BigInt] = {
-    require(hasEvenDigits(l))
-    val digits = l.toString.toList
-    val mid = digits.size / 2
-    val (left, right) = digits.splitAt(mid)
-    val leftNum = BigInt(left.mkString)
-    val rightNum = BigInt(right.mkString)
-    Seq(leftNum, rightNum)
   }
 
 }

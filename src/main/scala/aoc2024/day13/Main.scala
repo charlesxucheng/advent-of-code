@@ -1,8 +1,9 @@
 package aoc
 package aoc2024.day13
 
-import aoc2024.day13.ClawMachine.divide
+import aoc2024.day13.ClawMachine./?
 import common.Utils.loadData
+import scala.annotation.targetName
 import scala.util.matching.Regex
 
 object ClawMachine {
@@ -33,8 +34,11 @@ object ClawMachine {
     machines
   }
 
-  def divide(a: Long, b: Long): Option[Long] =
-    Option.when(b != 0 && a % b == 0)(a / b)
+  extension (a: Long) {
+    @targetName("safeDivide")
+    infix def /?(b: Long): Option[Long] =
+      Option.when(b != 0 && a % b == 0)(a / b)
+  }
 }
 
 case class Button(x: Long, y: Long)
@@ -49,8 +53,10 @@ case class ClawMachine(
   // Reference: https://en.wikipedia.org/wiki/Cramer%27s_rule
   // a1 = buttonA.x, a2 = buttonA.y, b1 = buttonB.x, b2 = buttonB.y, c1 = prize.x, c2 = prize.y
   def solve(): Option[Long] = for
-    numOfA <- divide(prize.x* buttonB.y - buttonB.x * prize.y,  buttonA.x * buttonB.y - buttonB.x * buttonA.y)
-    numOfB <- divide(buttonA.x * prize.y -prize.x * buttonA.y,  buttonA.x * buttonB.y - buttonB.x * buttonA.y)
+    numOfA <-
+      (prize.x * buttonB.y - buttonB.x * prize.y) /? (buttonA.x * buttonB.y - buttonB.x * buttonA.y)
+    numOfB <-
+      (buttonA.x * prize.y - prize.x * buttonA.y) /? (buttonA.x * buttonB.y - buttonB.x * buttonA.y)
   yield numOfA * 3 + numOfB
 }
 
@@ -68,7 +74,9 @@ case class ClawMachine(
   println(s"Part 1 - Tokens Required: ${tokens.flatten.sum}")
 
   val offset = 10000000000000L
-  val part2Machines = clawMachines.map(m => m.copy(prize = Prize(m.prize.x + offset, m.prize.y + offset)))
+  val part2Machines = clawMachines.map(m =>
+    m.copy(prize = Prize(m.prize.x + offset, m.prize.y + offset))
+  )
   val part2Tokens = part2Machines.map(_.solve())
   println(part2Tokens)
   println(s"Part 2 - Tokens Required: ${part2Tokens.flatten.sum}")
