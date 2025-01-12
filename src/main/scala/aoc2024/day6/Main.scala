@@ -4,26 +4,10 @@ package aoc2024.day6
 import aoc2024.day6.MazeWalker.tryAddObstacle
 import common.Direction.{East, North, South, West}
 import common.Utils.loadData
-import common.{Direction, Position, TwoDMap, TwoDimensionalArray}
+import common.{Direction, Position, TwoDMap}
 import scala.annotation.tailrec
 
 object MazeWalker {
-
-//  private def onMapBoarder(
-//      position: Position,
-//      map: Array[Array[Char]]
-//  ): Boolean =
-//    position.x == 0 || position.x == map.head.length - 1 || position.y == 0 || position.y == map.length - 1
-
-  private def onObstacle(position: Position, map: TwoDMap[Char]): Boolean =
-    map.hasValue(position, '#')
-
-  private def isLoop(
-      rightTurnPosition: Position,
-      direction: Direction,
-      previousRightTurnPositions: Set[(Position, Direction)]
-  ) =
-    previousRightTurnPositions.contains((rightTurnPosition, direction))
 
   @tailrec
   def forward(
@@ -45,7 +29,7 @@ object MazeWalker {
 
     val newPosition = Position(position.x + offset._1, position.y + offset._2)
     if (onObstacle(newPosition, map)) {
-      println(s"Turn right. New Position is $position")
+      println(s"Turn right. New Position is ${position.displayAsArrayElement}")
       if (isLoop(position, direction, rightTurnPositions))
         (true, positionsCovered)
       else
@@ -57,10 +41,14 @@ object MazeWalker {
           rightTurnPositions + ((position, direction))
         )
     } else if (map.isOnBorder(newPosition)) {
-      println(s"Reached border. New Position is $position")
+      println(
+        s"Reached border. New Position is ${position.displayAsArrayElement}"
+      )
       (false, positionsCovered + newPosition)
     } else {
-      println(s"Moving forward. New Position is $newPosition")
+      println(
+        s"Moving forward. New Position is ${newPosition.displayAsArrayElement}"
+      )
       forward(
         map,
         newPosition,
@@ -80,6 +68,16 @@ object MazeWalker {
     } else {
       None
     }
+
+  private def onObstacle(position: Position, map: TwoDMap[Char]): Boolean =
+    map.hasValue(position, '#')
+
+  private def isLoop(
+      rightTurnPosition: Position,
+      direction: Direction,
+      previousRightTurnPositions: Set[(Position, Direction)]
+  ) =
+    previousRightTurnPositions.contains((rightTurnPosition, direction))
 }
 
 @main def main(): Unit = {

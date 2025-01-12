@@ -6,6 +6,9 @@ import common.{Position, TwoDMap}
 import scala.annotation.tailrec
 
 object PlantRegion {
+  def findAllPlantRegions(map: TwoDMap[Char]): Set[PlantRegion] =
+    findPlantRegionsRec(map, map.allPositions, Set.empty)
+
   @tailrec
   private def fillRegion(
       positions: Set[Position],
@@ -36,9 +39,6 @@ object PlantRegion {
       )
   }
 
-  def findAllPlantRegions(map: TwoDMap[Char]): Set[PlantRegion] =
-    findPlantRegionsRec(map, map.allPositions, Set.empty)
-
   @tailrec
   private def findPlantRegionsRec(
       map: TwoDMap[Char],
@@ -48,7 +48,9 @@ object PlantRegion {
     positions match {
       case Seq() => accumulator
       case head +: tail =>
-        println(s"Finding region for $head (${map.get(head)})")
+        println(
+          s"Finding region for ${head.displayAsArrayElement} (${map.get(head)})"
+        )
         if (accumulator.exists(_.positions.contains(head)))
           findPlantRegionsRec(map, tail, accumulator)
         else {
@@ -65,8 +67,18 @@ object PlantRegion {
 }
 
 case class PlantRegion(positions: Set[Position], map: TwoDMap[Char]) {
-  def area: Int = positions.size
   def perimeter: Int = area * 4 - allStrictNeighbors.size
+
+  def area: Int = positions.size
+
+  private def allStrictNeighbors: Seq[Position] =
+    positions.toSeq.flatMap(strictNeighbors)
+
+  private def strictNeighbors(position: Position): Set[Position] = {
+    require(positions.contains(position))
+    position.cardinalPositions.intersect(positions)
+  }
+
   def sides: Int =
     if (area == 1) 4
     else
@@ -77,21 +89,13 @@ case class PlantRegion(positions: Set[Position], map: TwoDMap[Char]) {
         })
         .count(_ == true)
 
-  private def strictNeighbors(position: Position): Set[Position] = {
-    require(positions.contains(position))
-    position.cardinalPositions.intersect(positions)
-  }
-
-  private def allStrictNeighbors: Seq[Position] =
-    positions.toSeq.flatMap(strictNeighbors)
+  private def allRelaxedNeighbors: Seq[Set[Position]] =
+    positions.toSeq.map(p => relaxedNeighbors(p))
 
   private def relaxedNeighbors(position: Position): Set[Position] = {
     require(positions.contains(position))
     position.neighboringPositions.intersect(positions)
   }
-
-  private def allRelaxedNeighbors: Seq[Set[Position]] =
-    positions.toSeq.map(p => relaxedNeighbors(p))
 
   private def inflate: PlantRegion =
     PlantRegion(
