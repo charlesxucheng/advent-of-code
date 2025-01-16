@@ -109,8 +109,7 @@ object MazeWalker {
     println(s"Checking loop for ($j, $i)")
     val count = tryAddObstacle(map, Position(j, i))
       .map(updatedMap => {
-        val loc = updatedMap.findFirst('^').get
-        val startPosition = Position(loc._2, loc._1)
+        val startPosition = updatedMap.findFirstPosition('^').get
         val result = MazeWalker
           .forward(
             updatedMap,
