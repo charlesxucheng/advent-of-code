@@ -1,6 +1,7 @@
 package aoc
 package aoc2024.day15
 
+import aoc2024.day15.WarehouseMap.*
 import common.Utils.loadData
 import common.{Position, TwoDMap}
 import scala.annotation.tailrec
@@ -20,68 +21,124 @@ object MoveInstruction {
     MoveInstruction.values.find(_.symbol == c)
 }
 
-object WarehouseMap {
-  def apply(map: TwoDMap[Char]): WarehouseMap = {
-    val wallPositions: Set[Position] = map.findAll('#')
-    val boxPositions: Set[Position] = map.findAll('O')
-    val robotPosition: Position = map.findAll('@').head
-    WarehouseMap(wallPositions, boxPositions, robotPosition)
-  }
+sealed trait Box {
+  def move(instruction: MoveInstruction): Box
+}
+
+case class SingleCellBox(position: Position) extends Box {
+  override def move(instruction: MoveInstruction): Box = SingleCellBox(
+    this.position.shiftPosition(instruction)
+  )
+}
+
+case class DoubleCellBox(firstPos: Position, secondPos: Position) extends Box {
+  override def move(instruction: MoveInstruction): Box = DoubleCellBox(
+    firstPos.shiftPosition(instruction),
+    secondPos.shiftPosition(instruction)
+  )
+
+  def getTargetPositions(instruction: MoveInstruction): Set[Position] =
+    Set(firstPos, secondPos).map(_.shiftPosition(instruction)) -- Set(
+      firstPos,
+      secondPos
+    )
+
+  def measuringPosition: Position =
+    if (firstPos.x == secondPos.x) {
+      if (firstPos.y < secondPos.y) firstPos else secondPos
+    } else {
+      if (firstPos.x < secondPos.x) firstPos else secondPos
+    }
 }
 
 case class WarehouseMap(
     wallPositions: Set[Position],
-    boxPositions: Set[Position],
+    boxes: Set[Box],
     robotPosition: Position
 ) {
-  require(!(isWall(robotPosition) || isBox(robotPosition)))
+  val boxPositions: Set[Position] = boxes.flatMap {
+    case SingleCellBox(position)      => Set(position)
+    case DoubleCellBox(first, second) => Set(first, second)
+  }
 
-  def gpsCoordinate: Long = boxPositions.toSeq.map(p => p.y * 100L + p.x).sum
+  assert(!(isWall(robotPosition) || isBox(robotPosition)))
 
-  def moveRobot(instruction: MoveInstruction): WarehouseMap =
-    moveRobotRec(robotPosition, robotPosition, instruction, Set.empty)
+  def from(position: Position): Option[Box] =
+    boxes.find(box =>
+      box match {
+        case single: SingleCellBox => single.position == position
+        case double: DoubleCellBox =>
+          double.firstPos == position || double.secondPos == position
+      }
+    )
+
+  def gpsCoordinate: Long = boxes.toSeq.map {
+    case SingleCellBox(p) => p.y * 100L + p.x
+    case b: DoubleCellBox =>
+      b.measuringPosition.y * 100L + b.measuringPosition.x
+  }.sum
+
+  def moveRobot(instruction: MoveInstruction): WarehouseMap = {
+    println(
+      s"New Step: Robot position ${robotPosition} Move Instruction: $instruction"
+    )
+    println(s"Boxes: $boxes")
+    moveRobotRec(
+      robotPosition,
+      Set(robotPosition.shiftPosition(instruction)),
+      instruction,
+      Set.empty
+    )
+  }
 
   @tailrec
   private def moveRobotRec(
       robotPosition: Position,
-      referencePosition: Position,
+      targetPositions: Set[Position],
       instruction: MoveInstruction,
-      accumulatedBoxes: Set[Position]
+      accumulatedBoxes: Set[Box]
   ): WarehouseMap = {
-    val newPosition = shiftPosition(referencePosition, instruction)
-    println(s"Target Position is ${newPosition.displayAsArrayElement}")
+    println(
+      s"Target Positions are ${targetPositions.map(_.displayAsArrayElement)}"
+    )
 
-    if (isWall(newPosition)) {
-      println("Hit a wall. Map unchanged.")
+    if (targetPositions.exists(isWall)) {
+      val wallPositions = targetPositions.filter(isWall)
+      println(s"Positions $wallPositions are wall. Map unchanged.")
       this
-    } else if (isBox(newPosition)) {
-      println("Hit a box. Checking what is behind the box")
+    } else if (targetPositions.exists(isBox)) {
+      val boxPositions = targetPositions.filter(isBox)
+      println(
+        s"Positions $boxPositions are boxes. Checking what are behind the boxes"
+      )
+
+      val boxes = targetPositions.flatMap(from)
+      val newTargetPositions = boxes.flatMap {
+        case SingleCellBox(p)   => Set(p.shiftPosition(instruction))
+        case dcb: DoubleCellBox => dcb.getTargetPositions(instruction)
+      }
+
       moveRobotRec(
         robotPosition,
-        newPosition,
+        newTargetPositions,
         instruction,
-        accumulatedBoxes + newPosition
+        accumulatedBoxes ++ boxes
       )
-    } else if (isSpace(newPosition)) {
-      println("Hit a space. Moving robot and any boxes accumulated")
-      val newBoxPositions = accumulatedBoxes.map(shiftPosition(_, instruction))
+    } else if (targetPositions.forall(isSpace)) {
+      println("All positions are space. Moving robot and any boxes accumulated")
+      val newBoxes = accumulatedBoxes.toSeq.map(_.move(instruction))
       WarehouseMap(
         wallPositions,
-        boxPositions -- accumulatedBoxes ++ newBoxPositions,
-        shiftPosition(robotPosition, instruction)
+        boxes -- accumulatedBoxes ++ newBoxes,
+        robotPosition.shiftPosition(instruction)
       )
     } else {
       throw IllegalStateException("Another Robot detected on the map!!")
     }
   }
 
-  private def shiftPosition(position: Position, instruction: MoveInstruction) =
-    instruction match {
-      case MoveInstruction.Left  => position.copy(x = position.x - 1)
-      case MoveInstruction.Right => position.copy(x = position.x + 1)
-      case MoveInstruction.Up    => position.copy(y = position.y - 1)
-      case MoveInstruction.Down  => position.copy(y = position.y + 1)
-    }
+  private def isSpace(position: Position) =
+    !isWall(position) && !isBox(position) && !isRobot(position)
 
   private def isWall(position: Position) = wallPositions.contains(position)
 
@@ -89,11 +146,52 @@ case class WarehouseMap(
 
   private def isRobot(position: Position) = robotPosition == position
 
-  private def isSpace(position: Position) =
-    !isWall(position) && !isBox(position) && !isRobot(position)
 }
 
 case class Robot(position: Position, map: WarehouseMap) {}
+
+object WarehouseMap {
+  def apply(map: TwoDMap[Char]): WarehouseMap = {
+    val wallPositions: Set[Position] = map.findAll('#')
+    val singleCellBoxes = map.findAll('O').map(SingleCellBox.apply)
+    val doubleCellBoxes = map
+      .findAll('[')
+      .map(b => DoubleCellBox(b, b.copy(x = b.x + 1)))
+
+    val robotPosition: Position = map.findAll('@').head
+    WarehouseMap(
+      wallPositions,
+      singleCellBoxes ++ doubleCellBoxes,
+      robotPosition
+    )
+  }
+
+  extension (position: Position) {
+    def shiftPosition(instruction: MoveInstruction): Position =
+      instruction match {
+        case MoveInstruction.Left  => position.copy(x = position.x - 1)
+        case MoveInstruction.Right => position.copy(x = position.x + 1)
+        case MoveInstruction.Up    => position.copy(y = position.y - 1)
+        case MoveInstruction.Down  => position.copy(y = position.y + 1)
+      }
+  }
+
+  extension (map: TwoDMap[Char]) {
+    def widen(): TwoDMap[Char] = {
+      val array = map.map
+      val outArray = array.map(row =>
+        row.flatMap(c =>
+          c match {
+            case 'O'     => Seq('[', ']')
+            case '@'     => Seq('@', '.')
+            case a: Char => Seq(a, a)
+          }
+        )
+      )
+      TwoDMap(outArray)
+    }
+  }
+}
 
 @main def main(): Unit = {
 
@@ -103,8 +201,8 @@ case class Robot(position: Position, map: WarehouseMap) {}
 //  val instructionsFilename = "test2.txt"
 
   val map = loadData(mapFilename)(TwoDMap.parseInput(identity))
-  val warehouseMap = WarehouseMap(map)
   map.display()
+  val warehouseMap = WarehouseMap(map)
   println(
     s"Robot position: ${warehouseMap.robotPosition.displayAsArrayElement}"
   )
@@ -117,4 +215,20 @@ case class Robot(position: Position, map: WarehouseMap) {}
   })
 
   println(s"GPS Coordinate of all boxes = ${resultMap.gpsCoordinate}")
+
+  // Part 2
+  import WarehouseMap.*
+  val widenedMap = map.widen()
+  widenedMap.display()
+
+  val warehouseMap2 = WarehouseMap(widenedMap)
+  println(
+    s"Robot position: ${warehouseMap2.robotPosition.displayAsArrayElement}"
+  )
+
+  val resultMap2 = instructions.foldLeft(warehouseMap2)((map, instruction) => {
+    map.moveRobot(instruction)
+  })
+
+  println(s"GPS Coordinate of all boxes = ${resultMap2.gpsCoordinate}")
 }
