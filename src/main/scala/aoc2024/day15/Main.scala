@@ -56,14 +56,14 @@ case class WarehouseMap(
     boxes: Set[Box],
     robotPosition: Position
 ) {
-  val boxPositions: Set[Position] = boxes.flatMap {
+  private val boxPositions: Set[Position] = boxes.flatMap {
     case SingleCellBox(position)      => Set(position)
     case DoubleCellBox(first, second) => Set(first, second)
   }
 
   assert(!(isWall(robotPosition) || isBox(robotPosition)))
 
-  def from(position: Position): Option[Box] =
+  private def from(position: Position): Option[Box] =
     boxes.find(box =>
       box match {
         case single: SingleCellBox => single.position == position
@@ -79,10 +79,10 @@ case class WarehouseMap(
   }.sum
 
   def moveRobot(instruction: MoveInstruction): WarehouseMap = {
-    println(
-      s"New Step: Robot position ${robotPosition} Move Instruction: $instruction"
+    scribe.debug(
+      s"New Step: Robot position $robotPosition Move Instruction: $instruction"
     )
-    println(s"Boxes: $boxes")
+    scribe.debug(s"Boxes: $boxes")
     moveRobotRec(
       robotPosition,
       Set(robotPosition.shiftPosition(instruction)),
@@ -98,17 +98,17 @@ case class WarehouseMap(
       instruction: MoveInstruction,
       accumulatedBoxes: Set[Box]
   ): WarehouseMap = {
-    println(
+    scribe.debug(
       s"Target Positions are ${targetPositions.map(_.displayAsArrayElement)}"
     )
 
     if (targetPositions.exists(isWall)) {
       val wallPositions = targetPositions.filter(isWall)
-      println(s"Positions $wallPositions are wall. Map unchanged.")
+      scribe.debug(s"Positions $wallPositions are wall. Map unchanged.")
       this
     } else if (targetPositions.exists(isBox)) {
       val boxPositions = targetPositions.filter(isBox)
-      println(
+      scribe.debug(
         s"Positions $boxPositions are boxes. Checking what are behind the boxes"
       )
 
@@ -125,7 +125,7 @@ case class WarehouseMap(
         accumulatedBoxes ++ boxes
       )
     } else if (targetPositions.forall(isSpace)) {
-      println("All positions are space. Moving robot and any boxes accumulated")
+      scribe.debug("All positions are space. Moving robot and any boxes accumulated")
       val newBoxes = accumulatedBoxes.toSeq.map(_.move(instruction))
       WarehouseMap(
         wallPositions,
@@ -203,26 +203,26 @@ object WarehouseMap {
   val map = loadData(mapFilename)(TwoDMap.parseInput(identity))
   map.display()
   val warehouseMap = WarehouseMap(map)
-  println(
+  scribe.info(
     s"Robot position: ${warehouseMap.robotPosition.displayAsArrayElement}"
   )
 
   val instructions = loadData(instructionsFilename)(MoveInstruction.parseInput)
-  println(instructions)
+  scribe.info(instructions.toString())
 
   val resultMap = instructions.foldLeft(warehouseMap)((map, instruction) => {
     map.moveRobot(instruction)
   })
 
-  println(s"GPS Coordinate of all boxes = ${resultMap.gpsCoordinate}")
+  scribe.info(s"GPS Coordinate of all boxes = ${resultMap.gpsCoordinate}")
 
   // Part 2
-  import WarehouseMap.*
+  scribe.info("Part 2")
   val widenedMap = map.widen()
   widenedMap.display()
 
   val warehouseMap2 = WarehouseMap(widenedMap)
-  println(
+  scribe.info(
     s"Robot position: ${warehouseMap2.robotPosition.displayAsArrayElement}"
   )
 
@@ -230,5 +230,5 @@ object WarehouseMap {
     map.moveRobot(instruction)
   })
 
-  println(s"GPS Coordinate of all boxes = ${resultMap2.gpsCoordinate}")
+  scribe.info(s"GPS Coordinate of all boxes = ${resultMap2.gpsCoordinate}")
 }
