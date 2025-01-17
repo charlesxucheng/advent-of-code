@@ -20,18 +20,13 @@ case class Position(x: Int, y: Int) {
       .filterNot(p => p == this)
       .toSet
 
-  def directionTo(other: Position): Direction =
-    other - this match {
-      case (0, 1)  => Direction.North
-      case (0, -1) => Direction.South
-      case (1, 0)  => Direction.West
-      case (-1, 0) => Direction.East
-      case _ =>
-        throw new IllegalArgumentException(
-          s"Cannot calculate direction from $this to $other"
-        )
-    }
-  
+  def shift(direction: Direction): Position = direction match {
+    case Direction.North => Position(x, y - 1)
+    case Direction.East  => Position(x + 1, y)
+    case Direction.South => Position(x, y + 1)
+    case Direction.West  => Position(x - 1, y)
+  }
+
   @targetName("minus")
   def -(other: Position): (Int, Int) = (x - other.x, y - other.y)
 
