@@ -11,6 +11,8 @@ def main(): Unit = {
 //  val filename = "test.txt"
 
   val computer = loadData(filename)(parseInput)
-
   println(computer.get.runUntilEnd())
+
+  // Part 2
+  println(s"The value in register A should be ${Computer.findNumberForPart2().head}")
 }

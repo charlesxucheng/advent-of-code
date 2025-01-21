@@ -1,6 +1,8 @@
 package aoc
 package aoc2024.day17
 
+import scala.annotation.tailrec
+
 case class Operand(value: Int) {
   require(value >= 0 && value <= 7)
 }
@@ -17,22 +19,53 @@ object Computer {
           ) =>
         Some(
           Computer(
-            registerA = aValue.toInt,
-            registerB = bValue.toInt,
-            registerC = cValue.toInt,
+            registerA = aValue.toLong,
+            registerB = bValue.toLong,
+            registerC = cValue.toLong,
             instructions = instructions.split(",").map(_.toInt).toSeq,
             instructionPointer = 0
           )
         )
       case _ => None
-
   }
+
+  def findNumberForPart2(): Seq[Long] = {
+    val program = Seq(2, 4, 1, 2, 7, 5, 4, 5, 1, 3, 5, 5, 0, 3, 3, 0).reverse
+
+    def outputMatchesProgramCode(registerA: Long, expectedOutput: Int): Boolean = {
+      var registerB = (registerA % 8) ^ 0b010
+      val registerC = registerA >> registerB
+      registerB = registerB ^ registerC ^ 0b011
+      registerB % 8 == expectedOutput
+    }
+
+    @tailrec
+    def findBitsRec(step: Int, accumulatedInput: Seq[Long]): Seq[Long] = {
+      if (accumulatedInput.isEmpty)
+        scribe.warn(s"At step $step, no suitable solutions are found")
+      if (step == 16) accumulatedInput
+      else {
+        val a = for {
+          bits <- 0 to 7
+          accumulated <- accumulatedInput
+          appended = appendBits(accumulated, bits)
+          if outputMatchesProgramCode(appended, program(step))
+        } yield appended
+
+        findBitsRec(step + 1, a)
+      }
+    }
+
+    findBitsRec(0, Seq(0L))
+  }
+
+  private def appendBits(input: Long, bits: Int): Long = (input << 3) | bits
 }
 
 case class Computer(
-    registerA: Int,
-    registerB: Int,
-    registerC: Int,
+    registerA: Long,
+    registerB: Long,
+    registerC: Long,
     instructions: Seq[Int],
     instructionPointer: Int
 ) {
@@ -75,14 +108,11 @@ case class Computer(
     this.copy(registerB = combo(operand) % 8).nextInstruction()
 
   private def jnz(operand: Operand): Computer =
-    if (registerA == 0) this
+    if (registerA == 0) this.nextInstruction()
     else this.copy(instructionPointer = operand.value)
 
   private def bxc(operand: Operand): Computer =
     this.copy(registerB = registerB ^ registerC).nextInstruction()
-
-  private def nextInstruction(): Computer =
-    this.copy(instructionPointer = instructionPointer + 2)
 
   private def out(operand: Operand): Computer = {
     val output = combo(operand) % 8
@@ -90,7 +120,19 @@ case class Computer(
     this.nextInstruction()
   }
 
-  private def combo(operand: Operand): Int = operand match {
+  private def bdv(operand: Operand): Computer =
+    this.copy(registerB = rightShift(operand)).nextInstruction()
+
+  private def cdv(operand: Operand): Computer =
+    this.copy(registerC = rightShift(operand)).nextInstruction()
+
+  private def nextInstruction(): Computer =
+    this.copy(instructionPointer = instructionPointer + 2)
+
+  private def rightShift(operand: Operand): Long =
+    registerA >> combo(operand)
+
+  private def combo(operand: Operand): Long = operand match {
     case Operand(0 | 1 | 2 | 3) => operand.value
     case Operand(4)             => registerA
     case Operand(5)             => registerB
@@ -100,14 +142,5 @@ case class Computer(
         "Combo Operand value 7 is reserved and should not appear in valid programs."
       )
   }
-
-  private def bdv(operand: Operand): Computer =
-    this.copy(registerB = rightShift(operand)).nextInstruction()
-
-  private def cdv(operand: Operand): Computer =
-    this.copy(registerC = rightShift(operand)).nextInstruction()
-
-  private def rightShift(operand: Operand): Int =
-    registerA >> combo(operand)
 
 }
