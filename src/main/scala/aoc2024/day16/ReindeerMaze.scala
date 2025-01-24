@@ -9,9 +9,9 @@ import scala.collection.mutable.PriorityQueue
 case class Move(position: Position, direction: Direction, cost: Long)
 
 case class QueueElement(
-                         move: Move,
-                         visited: Set[Position]
-                       )
+    move: Move,
+    visited: Set[Position]
+)
 
 object ReindeerMaze {
   def createMap(map: TwoDMap[Char]): ReindeerMaze = {
