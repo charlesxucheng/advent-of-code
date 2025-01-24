@@ -36,19 +36,51 @@ object RAMMap {
       map: RAMMap,
       visited: Set[Position]
   ): Seq[Position] =
-    val moves = position.cardinalPositions.filter { p =>
+    position.cardinalPositions.filter { p =>
       map.contains(p) && !visited.contains(p) && !map.corruptions.contains(p)
     }.toSeq
-    moves
 
   def shortestPath(map: RAMMap): Int =
     shortestPathRec(
       map,
       Set.empty,
-      PriorityQueue(
-        Move(map.startPosition, 1)
-      )
+      PriorityQueue(Move(map.startPosition, 1))
+    ) - 1
+
+  // Performs a binary search from the 1025th memory corruption to the end
+  @tailrec
+  def allPathBlockedAt(
+      mapWithAllCorruptions: RAMMap,
+      min: Int,
+      max: Int
+  ): Int = {
+    val numberToTry = (min + max) / 2
+    val mapToTry = mapWithAllCorruptions.copy(corruptions =
+      mapWithAllCorruptions.corruptions.take(numberToTry)
     )
+
+    if (hasShortestPath(mapToTry)) {
+      if (max - min <= 1)
+        throw Exception(
+          "Searched all inputs and cannot find a corruption position that will cause all paths to be blocked"
+        )
+      else
+        allPathBlockedAt(mapWithAllCorruptions, numberToTry + 1, max)
+    } else {
+      if (max - min <= 1)
+        numberToTry - 1
+      else
+        allPathBlockedAt(mapWithAllCorruptions, min, numberToTry - 1)
+    }
+  }
+
+  private def hasShortestPath(map: RAMMap): Boolean =
+    try {
+      shortestPath(map)
+      true
+    } catch {
+      case _: NoSuchElementException => false
+    }
 
   @tailrec
   private def shortestPathRec(
@@ -77,12 +109,12 @@ object RAMMap {
           )
         })
 
-      nextQueueElements.foreach(m => {
+      nextQueueElements.foreach(m =>
         if (!nextMoves.exists(m.position == _.position)) {
           scribe.debug(s"Adding $m")
           nextMoves.enqueue(m)
         }
-      })
+      )
 
       shortestPathRec(
         map,
@@ -91,7 +123,6 @@ object RAMMap {
       )
     }
   }
-
 }
 
 case class RAMMap(
@@ -105,5 +136,4 @@ case class RAMMap(
 
   def contains(position: Position): Boolean =
     position.x >= 0 && position.x < colSize && position.y >= 0 && position.y < rowSize
-
 }
