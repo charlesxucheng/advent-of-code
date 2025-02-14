@@ -1,6 +1,7 @@
 package aoc
 package aoc2024.day23
 
+import aoc2024.day23.LanParty.findClique
 import common.Utils.loadData
 
 type Node = String
@@ -20,13 +21,43 @@ object LanParty {
       case List(a, b, c) => (a, b, c)
     }
 
-    isConnected(graph, a, b) && isConnected(graph, b, c) && isConnected(graph, a, c)
+    isConnected(graph, a, b) && isConnected(graph, b, c) && isConnected(
+      graph,
+      a,
+      c
+    )
   }
 
   private def isConnected(graph: LanGraph, a: Node, b: Node): Boolean =
     graph.getOrElse(a, Set.empty).contains(b) || graph
       .getOrElse(b, Set.empty)
       .contains(a)
+
+  def findClique(graph: LanGraph): Set[Node] =
+    def bronKerbosch(
+        potential: Set[Node],
+        excluded: Set[Node] = Set.empty,
+        result: Set[Node] = Set.empty
+    ): Set[String] =
+      if (potential.isEmpty && excluded.isEmpty)
+        result
+      else
+        val pivot = (potential ++ excluded)
+          .maxBy(vertex => potential.count(graph(vertex).contains))
+
+        val remaining = potential -- graph(pivot)
+
+        remaining.foldLeft(Set.empty[String]) { (currentMax, vertex) =>
+          val neighbors = graph(vertex)
+          val newClique = bronKerbosch(
+            result = result + vertex,
+            potential = potential & neighbors,
+            excluded = excluded & neighbors
+          )
+          if (newClique.size > currentMax.size) newClique else currentMax
+        }
+
+    bronKerbosch(potential = graph.keySet)
 
 }
 
@@ -53,7 +84,9 @@ def main(): Unit = {
   }.toSet
 
   scribe.debug(s"$triples")
-
   scribe.info(s"Part 1 result: ${triples.size}")
+
+  val password = findClique(input).toList.sorted.mkString(",")
+  scribe.info(s"Part 2 result: $password")
 
 }
