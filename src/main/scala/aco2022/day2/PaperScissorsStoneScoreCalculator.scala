@@ -32,14 +32,14 @@ object PaperScissorsStoneMapper {
 }
 
 object PaperScissorsStoneScoreCalculator {
-  def parseInput(lines: Iterator[String]): List[(PaperScissorsStone, PaperScissorsStone)] = {
+  def parseInput(lines: Iterable[String]): List[(PaperScissorsStone, PaperScissorsStone)] = {
     lines.map(_.split(" ").toList).map {
       case List(p1, p2) => (fromStringCol1(p1.charAt(0)), fromStringCol2(p2.charAt(0)))
       case _ => throw new IllegalArgumentException("Invalid input")
     }.toList
   }
 
-  def parseInputPart2(lines: Iterator[String]): List[(Outcome, PaperScissorsStone)] = {
+  def parseInputPart2(lines: Iterable[String]): List[(Outcome, PaperScissorsStone)] = {
     lines.map(_.split(" ").toList).map {
       case List(p1, p2) => PaperScissorsStoneMapper.fromStringCol2Part2(p1.charAt(0), p2.charAt(0))
       case _ => throw new IllegalArgumentException("Invalid input")

@@ -9,7 +9,7 @@ case class Operand(value: Int) {
 
 object Computer {
 
-  def parseInput(input: Iterator[String]): Option[Computer] = {
+  def parseInput(input: Iterable[String]): Option[Computer] = {
     input.toSeq.filter(_ != "") match
       case Seq(
             s"Register A: ${aValue}",

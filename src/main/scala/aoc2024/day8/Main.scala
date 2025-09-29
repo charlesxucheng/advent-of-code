@@ -29,7 +29,7 @@ object AntennaMap {
   }
 
   def parseInput(lines: Iterator[String]): AntennaMap = {
-    val chars = common.CharList.parseInput(lines)
+    val chars = common.CharList.parseInput(lines.to(LazyList))
     val colSize = chars.head.length
     val rowSize = chars.length
 

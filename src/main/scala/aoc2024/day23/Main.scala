@@ -9,7 +9,7 @@ type LanGraph = Map[Node, Set[Node]]
 
 object LanParty {
 
-  def parseInput(input: Iterator[Node]): LanGraph =
+  def parseInput(input: Iterable[Node]): LanGraph =
     input.toSet
       .flatMap { case s"$a-$b" => Set(a -> b, b -> a) }
       .groupMap(_._1)(_._2)

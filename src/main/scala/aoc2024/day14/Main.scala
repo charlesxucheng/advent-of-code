@@ -52,7 +52,7 @@ case class Robot(position: Position, velocity: Velocity, map: Map) {
 }
 
 object Robot {
-  def parseInput(input: Iterator[String]): Seq[Robot] = {
+  def parseInput(input: Iterable[String]): Seq[Robot] = {
     val map = Map(width = 101, height = 103)
     val robots = input.map:
       case s"p=$px,$py v=$vx,$vy" =>

@@ -13,7 +13,7 @@ object CalorieCalculator {
         .map(_.split(";"))
         .map(_.map(_.toInt).toList)
   }
-  def parseInput(input: Iterator[String]): List[List[Int]] = {
+  def parseInput(input: Iterable[String]): List[List[Int]] = {
     if (input == null || input.isEmpty)
       List.empty
     else

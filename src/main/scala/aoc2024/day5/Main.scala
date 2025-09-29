@@ -8,7 +8,7 @@ import scala.annotation.tailrec
 
 object RuleValidator {
 
-  def parseRulesInput(input: Iterator[String]): List[Rule] =
+  def parseRulesInput(input: Iterable[String]): List[Rule] =
     input
       .map(_.split("\\|").take(2))
       .map(pair => Rule(pair(0).toInt, pair(1).toInt))

@@ -9,7 +9,7 @@ import scala.annotation.tailrec
 case class CalculationComponents(result: Long, operands: List[Long])
 
 object Calculator {
-  def parseInput(input: Iterator[String]): List[CalculationComponents] =
+  def parseInput(input: Iterable[String]): List[CalculationComponents] =
     input
       .map(_.split(":"))
       .map { components =>

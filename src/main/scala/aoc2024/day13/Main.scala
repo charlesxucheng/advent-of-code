@@ -7,11 +7,11 @@ import scala.annotation.targetName
 import scala.util.matching.Regex
 
 object ClawMachine {
-  def parseInput(input: Iterator[String]): Seq[ClawMachine] = {
+  def parseInput(input: Iterable[String]): Seq[ClawMachine] = {
     val buttonPattern: Regex = """Button ([AB]): X\+(\d+), Y\+(\d+)""".r
     val prizePattern: Regex = """Prize: X=(\d+), Y=(\d+)""".r
 
-    val machines = input
+    val machines = input.to(LazyList)
       .filter(_ != "")
       .grouped(3)
       .flatMap {

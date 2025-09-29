@@ -62,7 +62,7 @@ case class TwoDMap[T: ClassTag](map: Array[Array[T]]) {
 
 object TwoDMap {
   def parseInput[T: ClassTag](converter: Char => T)(
-      input: Iterator[String]
+      input: Iterable[String]
   ): TwoDMap[T] =
-    TwoDMap(TwoDimensionalArray.parseInput(converter)(input))
+    TwoDMap(TwoDimensionalArray.parseInput(converter)(input.iterator))
 }

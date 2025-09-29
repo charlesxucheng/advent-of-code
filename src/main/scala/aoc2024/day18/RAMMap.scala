@@ -2,8 +2,9 @@ package aoc
 package aoc2024.day18
 
 import common.Position
+
 import scala.annotation.tailrec
-import scala.collection.mutable.PriorityQueue
+import scala.collection.mutable
 
 case class Move(position: Position, time: Int)
 
@@ -11,7 +12,7 @@ implicit val ordering: Ordering[Move] = Ordering.by[Move, Int](_.time).reverse
 
 object RAMMap {
 
-  def parseInput(input: Iterator[String]): Seq[Position] = {
+  def parseInput(input: Iterable[String]): Seq[Position] = {
     input
       .map(x => {
         val pair = x.split(",")
@@ -44,7 +45,7 @@ object RAMMap {
     shortestPathRec(
       map,
       Set.empty,
-      PriorityQueue(Move(map.startPosition, 1))
+      mutable.PriorityQueue(Move(map.startPosition, 1))
     ) - 1
 
   // Performs a binary search from the 1025th memory corruption to the end
@@ -86,7 +87,7 @@ object RAMMap {
   private def shortestPathRec(
       map: RAMMap,
       visited: Set[Position],
-      nextMoves: PriorityQueue[Move]
+      nextMoves: mutable.PriorityQueue[Move]
   ): Int = {
     val currentMove = nextMoves.dequeue()
 

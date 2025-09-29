@@ -13,8 +13,8 @@ case class File(id: Long, size: Int) extends FileSystemObject
 case class FreeSpace(size: Int) extends FileSystemObject
 
 object FileSystem {
-  def parseInput(input: Iterator[String]): Seq[FileSystemObject] =
-    input.next().toSeq.zipWithIndex.map { case (char, id) =>
+  def parseInput(input: Iterable[String]): Seq[FileSystemObject] =
+    input.iterator.next().toSeq.zipWithIndex.map { case (char, id) =>
       if (id % 2 == 0) File(id / 2, Integer.parseInt(char.toString))
       else FreeSpace(Integer.parseInt(char.toString))
     }
@@ -78,12 +78,10 @@ object FileSystem {
       x match {
         case _: FreeSpace => compactWholeFileRec(fsObjects, index - 1)
         case file: File =>
-          val moveToIndex = fsObjects.indexWhere(obj =>
-            obj match {
-              case fs: FreeSpace => fs.size >= file.size
-              case _: File       => false
-            }
-          )
+          val moveToIndex = fsObjects.indexWhere {
+            case fs: FreeSpace => fs.size >= file.size
+            case _: File => false
+          }
 
           // The file can fit into some free space before it
           if (
@@ -155,10 +153,10 @@ object FileSystem {
 
   def computeCheckSum(fsObjects: Seq[FileSystemObject]): Long =
     fsObjects
-      .flatMap(_ match {
-        case file: File           => (0 until file.size).map(_ => file.id)
+      .flatMap {
+        case file: File => (0 until file.size).map(_ => file.id)
         case freeSpace: FreeSpace => (0 until freeSpace.size).map(_ => 0L)
-      })
+      }
       .zipWithIndex
       .map { case (id, index) => id * index }
       .sum

@@ -4,8 +4,9 @@ package aoc2024.day24
 import aoc2024.day24.Gate.simulateGates
 import aoc2024.day24.OperationName.{AND, OR, XOR}
 import common.Utils.loadData
+
 import scala.annotation.tailrec
-import scala.collection.mutable.{Map, Queue}
+import scala.collection.mutable.Map
 import scala.collection.{immutable, mutable}
 
 type Wire = String
@@ -33,22 +34,16 @@ case class Gate(
 
 object Gate {
 
-  def apply(
-      input1: Wire,
-      input2: Wire,
-      output: Wire,
-      operation: OperationName
-  ) =
-    new Gate(GateInput(input1, input2), output, operation)
-
-  private val operations: Map[OperationName, Operation] = Map(
+  private val operations: mutable.Map[OperationName, Operation] = mutable.Map(
     AND -> ((a, b) => a && b),
     OR -> ((a, b) => a || b),
     XOR -> ((a, b) => a != b)
   )
 
-  def parseInput(input: Iterator[String]): (Map[Wire, Boolean], Queue[Gate]) = {
-    val initialValues = Map.empty[Wire, Boolean]
+  def parseInput(
+      input: Iterable[String]
+  ): (mutable.Map[Wire, Boolean], mutable.Queue[Gate]) = {
+    val initialValues = mutable.Map.empty[Wire, Boolean]
 
     input
       .takeWhile(_.contains(":"))
@@ -68,21 +63,21 @@ object Gate {
         Gate(input1, input2, output, OperationName.valueOf(gateParts(1)))
       }
 
-    (initialValues, Queue(gates.toSeq*))
+    (initialValues, mutable.Queue(gates.toSeq*))
   }
 
-  private def buildMap(
-      gates: List[Gate]
-  ): immutable.Map[(GateInput, OperationName), Wire] = {
-    gates.map { gate =>
-      ((gate.input, gate.operation), gate.output)
-    }.toMap
-  }
+  def apply(
+      input1: Wire,
+      input2: Wire,
+      output: Wire,
+      operation: OperationName
+  ) =
+    new Gate(GateInput(input1, input2), output, operation)
 
   def simulateGates(
-      gates: Queue[Gate],
-      initialValues: Map[Wire, Boolean]
-  ): Map[Wire, Boolean] = {
+      gates: mutable.Queue[Gate],
+      initialValues: mutable.Map[Wire, Boolean]
+  ): mutable.Map[Wire, Boolean] = {
     val wireValues = initialValues
 
     while (gates.nonEmpty) {
@@ -99,9 +94,6 @@ object Gate {
     }
     wireValues
   }
-
-  private inline def formString(prefix: String, number: Int) =
-    prefix + "%02d".format(number)
 
   def findInvalidGates(gates: List[Gate]): List[(Gate, String)] = {
     val gateMap = buildMap(gates)
@@ -158,6 +150,17 @@ object Gate {
     val carry1 = gateMap((GateInput("x00", "y00"), AND))
     checkGates(1, carry1, List.empty)
   }
+
+  private def buildMap(
+      gates: List[Gate]
+  ): immutable.Map[(GateInput, OperationName), Wire] = {
+    gates.map { gate =>
+      ((gate.input, gate.operation), gate.output)
+    }.toMap
+  }
+
+  private inline def formString(prefix: String, number: Int) =
+    prefix + "%02d".format(number)
 
 }
 

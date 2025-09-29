@@ -8,16 +8,17 @@ object Utils {
 
   def loadData[T, C[_]](
       filename: String
-  )(parser: Iterator[String] => C[T]): C[T] = {
+  )(parser: Iterable[String] => C[T]): C[T] = {
     val source = Source.fromFile(filename)
     try {
-      parser(source.getLines())
+      parser(source.getLines().to(LazyList))
     } finally source.close()
   }
+ 
 }
 
 object NumberList {
-  def parseInput(delimiter: String)(lines: Iterator[String]): List[List[Int]] =
+  def parseInput(delimiter: String)(lines: Iterable[String]): List[List[Int]] =
     lines
       .map(
         _.split(delimiter)
@@ -28,7 +29,7 @@ object NumberList {
 }
 
 object CharList {
-  def parseInput(input: Iterator[String]): List[List[Char]] =
+  def parseInput(input: Iterable[String]): List[List[Char]] =
     input.map(line => line.toList).toList
 }
 

@@ -57,11 +57,11 @@ class PaperScissorsStoneTest extends UnitSpec {
   }
 
   "Single input line can be mapped to a pair of items" in {
-    PaperScissorsStoneScoreCalculator.parseInput(Iterator("A X")) shouldBe List((Stone, Stone))
+    PaperScissorsStoneScoreCalculator.parseInput(Seq("A X")) shouldBe List((Stone, Stone))
   }
 
   "Multiple input lines can be mapped to list of items" in {
-    val input = Iterator("A Y", "B X", "C Z")
+    val input = Seq("A Y", "B X", "C Z")
     val expected = List((Stone, Paper), (Paper, Stone), (Scissors, Scissors))
     PaperScissorsStoneScoreCalculator.parseInput(input) shouldBe expected
   }

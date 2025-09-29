@@ -18,7 +18,7 @@ object DuplicateItemFinder {
     left.toSet.intersect(right.toSet)
   }
 
-  def parseInput(lines: Iterator[String]): List[List[ElfItem]] =
+  def parseInput(lines: Iterable[String]): List[List[ElfItem]] =
     lines.map(ElfItem.from).toList
 
   def sumPriority(items: Set[ElfItem]): Int = items.map(_.priority).sum
@@ -26,7 +26,7 @@ object DuplicateItemFinder {
   def sumAllPriority(input: List[List[ElfItem]]): Int =
     input.map(findCommonItems).map(sumPriority).sum
 
-  def parseInput2(lines: Iterator[String]): List[(List[ElfItem], List[ElfItem], List[ElfItem])] = {
+  def parseInput2(lines: Iterable[String]): List[(List[ElfItem], List[ElfItem], List[ElfItem])] = {
     val input = lines.toList
     require(input.size % 3 == 0)
     val result = input.grouped(3).toList.map(group => {

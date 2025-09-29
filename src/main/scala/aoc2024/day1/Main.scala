@@ -6,7 +6,7 @@ import common.Utils.loadData
 import scala.io.Source
 
 object NumberPairs {
-  def parseInput(lines: Iterator[String]): List[(Int, Int)] =
+  def parseInput(lines: Iterable[String]): List[(Int, Int)] =
     lines
       .map(_.split(" {3}"))
       .map(pair => (pair(0).toInt, pair(1).toInt))

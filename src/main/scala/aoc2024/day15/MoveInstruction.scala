@@ -9,7 +9,7 @@ enum MoveInstruction(val symbol: Char) {
 }
 
 object MoveInstruction {
-  def parseInput(input: Iterator[String]): Seq[MoveInstruction] =
+  def parseInput(input: Iterable[String]): Seq[MoveInstruction] =
     input.toSeq.flatten.flatMap(fromChar)
 
   private def fromChar(c: Char): Option[MoveInstruction] =

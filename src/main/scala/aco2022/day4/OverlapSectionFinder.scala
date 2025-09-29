@@ -22,7 +22,7 @@ case class SectionRange(start: Int, end: Int) {
 
 object OverlapSectionFinder {
   def parseInput(
-      lines: Iterator[String]
+      lines: Iterable[String]
   ): List[(SectionRange, SectionRange)] = {
     val pattern = "(\\d+)-(\\d+),(\\d+)-(\\d+)".r
     lines.map { case pattern(start1, end1, start2, end2) =>

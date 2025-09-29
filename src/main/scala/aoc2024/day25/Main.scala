@@ -8,7 +8,7 @@ object Schematics {
     input.head.indices.map(col => input.map(row => row(col)).count(_ == '#'))
 
   def parseInput(
-      input: Iterator[String]
+      input: Iterable[String]
   ): (Seq[IndexedSeq[Int]], Seq[IndexedSeq[Int]]) = {
     val (locksRaw, keysRaw) =
       input

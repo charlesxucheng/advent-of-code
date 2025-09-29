@@ -46,14 +46,14 @@ class DuplicateItemFinderTest extends UnitSpec {
     }
     "given a list of strings representing ElfItems" should {
       "sum their priorities correctly" in {
-        val testData = Seq("AbccDa", "YfzHaaaXfGbLkx", "XX", "AbccEAce", "dddd", "AXFPPFXA").iterator
+        val testData = Seq("AbccDa", "YfzHaaaXfGbLkx", "XX", "AbccEAce", "dddd", "AXFPPFXA")
         val elfItems = DuplicateItemFinder.parseInput(testData)
         DuplicateItemFinder.sumAllPriority(elfItems) shouldBe 244
       }
     }
     "given a list of strings representing ElfItems" should {
       "parse them into a list of list of ElfItems" in {
-        val testData = Seq("AbccDa", "XX").iterator
+        val testData = Seq("AbccDa", "XX")
         val elfItems = DuplicateItemFinder.parseInput(testData)
         elfItems shouldBe List(
           List(ElfItem('A'), ElfItem('b'), ElfItem('c'), ElfItem('c'), ElfItem('D'), ElfItem('a')),
@@ -63,7 +63,7 @@ class DuplicateItemFinderTest extends UnitSpec {
     }
     "given a list of three strings representing ElfItems in Part 2" should {
       "parse them into three lists of ElfItems" in {
-        val testData = Seq("vJrwpv", "jqHR", "Pmmdzm").iterator
+        val testData = Seq("vJrwpv", "jqHR", "Pmmdzm")
         val elfItems = DuplicateItemFinder.parseInput2(testData)
         elfItems shouldBe List(
           (List(ElfItem('v'), ElfItem('J'), ElfItem('r'), ElfItem('w'), ElfItem('p'), ElfItem('v')),
@@ -82,7 +82,7 @@ class DuplicateItemFinderTest extends UnitSpec {
           "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn",
           "ttgJtRGJQctTZtZT",
           "CrZsJsPPZsGzwwsLwLmpwMDw"
-        ).iterator
+        )
         val elfItems = DuplicateItemFinder.parseInput2(testData)
         val badgePriority = DuplicateItemFinder.sumAllBadgePriority(elfItems)
         badgePriority shouldBe ElfItem('r').priority + ElfItem('Z').priority
