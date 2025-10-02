@@ -10,27 +10,6 @@ object DirSizeCalculator {
   private val ROOT_DIR_NAME = "/"
   private val DIR_SEPARATOR = "/"
 
-  sealed trait FileSystemIO
-
-  case class CdInto(dirName: String) extends FileSystemIO
-  case class CdUp() extends FileSystemIO
-  case class Ls() extends FileSystemIO
-  case class DirectoryOutput(dirName: String) extends FileSystemIO
-  case class FileOutput(fileName: String, fileSize: Long) extends FileSystemIO
-
-  private def fromString(line: String): FileSystemIO = {
-    line match {
-      case s"$$ $cmd $arg" =>
-        cmd match {
-          case "cd" if arg == ".." => CdUp()
-          case "cd" => CdInto(arg)
-        }
-      case "$ ls" => Ls()
-      case s"dir $dirName" => DirectoryOutput(dirName)
-      case s"$fileSize $fileName" => FileOutput(fileName, fileSize.toLong)
-    }
-  }
-
   def parseInput(input: Iterable[String]): Map[String, Directory] = {
     val root = Directory(ROOT_DIR_NAME, Nil, Nil)
 
@@ -114,6 +93,19 @@ object DirSizeCalculator {
     )
   }
 
+  private def fromString(line: String): FileSystemIO = {
+    line match {
+      case s"$$ $cmd $arg" =>
+        cmd match {
+          case "cd" if arg == ".." => CdUp()
+          case "cd"                => CdInto(arg)
+        }
+      case "$ ls"                 => Ls()
+      case s"dir $dirName"        => DirectoryOutput(dirName)
+      case s"$fileSize $fileName" => FileOutput(fileName, fileSize.toLong)
+    }
+  }
+
   private def formFullPath(parentDirName: String, dirName: String) = {
     if (parentDirName == ROOT_DIR_NAME) parentDirName + dirName
     else parentDirName + DIR_SEPARATOR + dirName
@@ -156,6 +148,18 @@ object DirSizeCalculator {
     calculateDirectorySizesRec(List("/"), HashMap())
   }
 
+  sealed trait FileSystemIO
+
+  case class CdInto(dirName: String) extends FileSystemIO
+
+  case class CdUp() extends FileSystemIO
+
+  case class Ls() extends FileSystemIO
+
+  case class DirectoryOutput(dirName: String) extends FileSystemIO
+
+  case class FileOutput(fileName: String, fileSize: Long) extends FileSystemIO
+
   case class File(name: String, size: Long)
 
   case class Directory(
@@ -179,4 +183,12 @@ object DirSizeCalculator {
   val part1Result = dirSizes.filter(_._2 <= 100000L)
   println(part1Result)
   println(s"Part 1 result: ${part1Result.values.sum}")
+
+  val totalDiskSpace = 70000000L
+  val requiredFreeSpace = 30000000L
+  val currentFreeSpace = totalDiskSpace - dirSizes("/")
+  val spaceToReclaim = requiredFreeSpace - currentFreeSpace
+  val part2Result = dirSizes.filter(_._2 >= spaceToReclaim)
+  println(part2Result)
+  println(s"Part 2 result: ${part2Result.minBy(_._2)._2}")
 }
