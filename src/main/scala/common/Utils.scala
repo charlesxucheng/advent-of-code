@@ -6,15 +6,23 @@ import scala.reflect.ClassTag
 
 object Utils {
 
-  def loadData[T, C[_]](
+//  def loadData[T, C[_]](
+//      filename: String
+//  )(parser: Iterable[String] => C[T]): C[T] = {
+//    val source = Source.fromFile(filename)
+//    try {
+//      parser(source.getLines().to(LazyList))
+//    } finally source.close()
+//  }
+
+  def loadData[T](
       filename: String
-  )(parser: Iterable[String] => C[T]): C[T] = {
+  )(parser: Iterable[String] => T): T = {
     val source = Source.fromFile(filename)
     try {
       parser(source.getLines().to(LazyList))
     } finally source.close()
   }
- 
 }
 
 object NumberList {
