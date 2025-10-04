@@ -6,15 +6,6 @@ import scala.reflect.ClassTag
 
 object Utils {
 
-//  def loadData[T, C[_]](
-//      filename: String
-//  )(parser: Iterable[String] => C[T]): C[T] = {
-//    val source = Source.fromFile(filename)
-//    try {
-//      parser(source.getLines().to(LazyList))
-//    } finally source.close()
-//  }
-
   def loadData[T](
       filename: String
   )(parser: Iterable[String] => T): T = {
@@ -46,4 +37,14 @@ object TwoDimensionalArray {
       input: Iterator[String]
   ): Array[Array[T]] =
     input.map(line => line.toArray.map(converter)).toArray
+
+  def print2DArray[T](array: Array[Array[T]]): Unit = {
+    array.foreach { row =>
+      val rowAsString = row.map {
+        case b: Boolean => if (b) "1" else "0"
+        case other      => other.toString
+      }.mkString(" ")
+      println(rowAsString)
+    }
+  }
 }
