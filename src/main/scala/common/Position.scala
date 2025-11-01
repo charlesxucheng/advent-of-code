@@ -27,6 +27,13 @@ case class Position(x: Int, y: Int) {
     case Direction.West  => Position(x - 1, y)
   }
 
+  def shift(direction: MovementDirection): Position = direction match {
+    case MovementDirection.Up => Position(x, y + 1)
+    case MovementDirection.Right  => Position(x + 1, y)
+    case MovementDirection.Down => Position(x, y - 1)
+    case MovementDirection.Left  => Position(x - 1, y)
+  }
+
   @targetName("minus")
   def -(other: Position): (Int, Int) = (x - other.x, y - other.y)
 
